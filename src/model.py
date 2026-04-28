@@ -147,12 +147,24 @@ class F4C2Model:
     def _per_flow_dist(
         self, k_f: int, can_depart: bool, q_f: float
     ) -> list[tuple[int, float]]:
-        """Per-flow next-queue distribution: list of (k_f_next, prob)."""
+        """Per-flow next-queue distribution: list of (k_f_next, prob).
+
+        Paper section 2.6 dynamics inside one slot:
+            (i)   observe state at slot start
+            (ii)  arrival Bernoulli(q_f) joins the queue
+            (iii) departure (one car leaves if queue non-empty AND active)
+            (iv)  observe state at slot end
+        Therefore a car arriving at an empty active queue gets served in
+        the same slot. The paper's formula 3.3 captures this:
+            p_f(k, a, (k - 1)^+) = 1 - q,  p_f(k, a, k) = q   if can_depart
+            p_f(k, a, k)         = 1 - q,  p_f(k, a, k + 1) = q   else
+        Note: at k = 0 with can_depart, both transitions land on 0 — the
+        arriving car is immediately served.
+        """
         K = self.params.K
         if can_depart:
-            # one car leaves deterministically (if any), then 0/1 arrival
-            no_arr = max(k_f - 1, 0)
-            with_arr = no_arr + 1                        # always <= K since k_f <= K
+            no_arr = max(k_f - 1, 0)        # no arrival, one departure
+            with_arr = k_f                  # arrival + departure cancel; at k=0 stays 0
             return [(no_arr, 1.0 - q_f), (with_arr, q_f)]
         # red for this flow: only arrivals
         if k_f >= K:

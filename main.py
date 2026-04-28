@@ -1,24 +1,39 @@
 """CLI entry point for the F4C2 traffic-MDP solver.
 
-Examples
---------
-Replicate Table 1 of Haijema & van der Wal (2008) (rho in {0.4, 0.6, 0.8})
-with both Value Iteration and Policy Iteration:
+Recommended end-to-end run for the homework
+-------------------------------------------
+    python main.py table1 --K 10 --lp-K 6
 
-    python main.py table1
+VI and PI run at K=10 (paper-Table-1 numbers). LP runs at K=6 (small
+state space, fast HiGHS solve), with a companion VI@K=6 so the LP/VI
+cross-check is at matching K. This sidesteps LP's pathological
+dual-simplex degeneracy on the K=10 polytope at higher rho.
 
-Solve at a single workload (e.g. rho = 0.4) with VI only:
-
-    python main.py single --rho 0.4 --algo vi
+Other forms
+-----------
+    python main.py table1                    # all 3 at K=10 (LP slow at rho>=0.6)
+    python main.py table1 --algo vi-pi       # paper match only
+    python main.py single --rho 0.4 --algo lp --K 6
 
 Knobs
 -----
-    --K              per-flow buffer cap (default 10).  Larger -> more states,
-                     more accuracy at high rho. K=10 is fine for rho <= 0.6;
-                     try K=12 or 15 for rho = 0.8.
-    --algo           vi | pi | both (default both)
+    --K              per-flow buffer cap for VI, PI (default 10).
+    --lp-K           per-flow buffer cap for LP (default: same as --K).
+                     Set to 6 or 8 when running LP to keep the LP tractable.
+    --algo           vi | pi | lp | vi-pi | vi-lp | pi-lp | all | both
+                     (default all). 'both' is a legacy alias for vi-pi.
     --tol            VI relative-span stopping tolerance (default 1e-6)
     --log-interval   seconds between progress lines (default 1.0)
+
+Notes
+-----
+PI is presented for completeness. The notes (p. 6) prove PI's correctness
+under the *unichain* MDP assumption; the F4C2 traffic MDP is only
+*weakly unichain* (notes p. 11), so PI's intermediate iterations can
+generate reducible policies for which the Poisson recursion does not
+converge cleanly. Empirically PI works at rho <= 0.6 and fails at rho = 0.8.
+The notes recommend LP for the weakly-unichain regime; it works at every rho
+but the K=10 LP is computationally pathological -- hence the small --lp-K.
 """
 
 from __future__ import annotations
@@ -35,14 +50,42 @@ def _build_parser() -> argparse.ArgumentParser:
 
     # common kwargs
     def _add_common(sp: argparse.ArgumentParser) -> None:
-        sp.add_argument("--K", type=int, default=10, help="buffer cap per flow")
+        sp.add_argument("--K", type=int, default=10, help="buffer cap per flow (used for VI, PI)")
+        sp.add_argument(
+            "--lp-K",
+            type=int,
+            default=None,
+            dest="lp_K",
+            help=(
+                "buffer cap for the LP run only (default: same as --K). "
+                "Set to a smaller value (e.g. 6) to keep LP tractable at higher rho. "
+                "When this differs from --K, a companion VI@lp_K run is also performed "
+                "so the LP/VI cross-check is at the same K."
+            ),
+        )
         sp.add_argument(
             "--algo",
-            choices=("vi", "pi", "both"),
-            default="both",
-            help="which solver(s) to run",
+            choices=(
+                "vi", "pi", "lp",
+                "vi-pi", "vi-lp", "pi-lp",
+                "all", "both",
+            ),
+            default="all",
+            help="which solver(s) to run (default: all 3)",
         )
         sp.add_argument("--tol", type=float, default=1e-6, help="VI stopping tolerance")
+        sp.add_argument(
+            "--lp-method",
+            choices=("highs", "highs-ds", "highs-ipm"),
+            default="highs",
+            dest="lp_method",
+            help=(
+                "scipy.linprog method for LP. 'highs' lets HiGHS auto-pick "
+                "(usually dual simplex). 'highs-ipm' = interior point, much "
+                "faster on the heavily degenerate MDP polytope at higher rho. "
+                "Recommended for any rho >= 0.6: --lp-method highs-ipm."
+            ),
+        )
         sp.add_argument(
             "--log-interval",
             type=float,
@@ -68,6 +111,8 @@ def main(argv: list[str] | None = None) -> int:
             algo=args.algo,
             tol=args.tol,
             log_interval=args.log_interval,
+            lp_K=args.lp_K,
+            lp_method=args.lp_method,
         )
     elif args.cmd == "single":
         run_single(
@@ -76,6 +121,8 @@ def main(argv: list[str] | None = None) -> int:
             algo=args.algo,
             tol=args.tol,
             log_interval=args.log_interval,
+            lp_K=args.lp_K,
+            lp_method=args.lp_method,
         )
     else:                                    # argparse already enforces required=True
         return 2

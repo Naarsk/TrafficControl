@@ -20,7 +20,6 @@ from dataclasses import dataclass
 
 import numpy as np
 import scipy.sparse as sp
-from scipy.sparse.linalg import spsolve
 
 from .model import F4C2Model
 from .progress import ProgressLogger
@@ -172,32 +171,104 @@ def _policy_kernel(model: F4C2Model, policy_sa: np.ndarray) -> tuple[sp.csr_matr
 
 
 def evaluate_policy(
-    model: F4C2Model, policy_sa: np.ndarray, ref_state: int = 0
+    model: F4C2Model,
+    policy_sa: np.ndarray,
+    ref_state: int = 0,
+    tol: float = 1e-6,                       # match VI's stopping tolerance
+    max_iter: int = 10_000,                  # bound the wasted time when policy is near-reducible
+    log_interval: float = 1.0,
 ) -> tuple[float, np.ndarray]:
-    """Solve the Poisson equations for a fixed policy.
+    """Solve the Poisson equations by successive approximation (iterative).
 
-    Build the augmented sparse system ((n+1) x (n+1)):
-        (I - P_R) V + 1 * g = r_R           (n equations, one per state)
-                       V[ref] = 0           (1 normalisation row)
-    and solve with sparse LU. Returns (g, V).
+    The "direct" approach -- assemble the augmented (n+1) x (n+1) sparse
+    system and call ``scipy.sparse.linalg.spsolve`` -- works for tiny
+    state spaces but performs a sparse LU on a 117k x 117k matrix here,
+    with heavy fill-in: each call takes minutes (or longer).
+
+    Instead we run VI fixed at the policy: V_{n+1} = r_R + P_R V_n.
+    Under strong aperiodicity (already enforced by the tau-transform in
+    the model build), this converges geometrically with V_{n+1} - V_n -> g.
+    Each step is one sparse mat-vec, ~30 ms here, so a typical eval
+    takes a few hundred steps and a few seconds.
+
+    At convergence,  V_n = V_inf + n * g + o(1).  Subtracting V_n[ref]
+    cancels the linear-in-n drift and yields the bounded relative value
+    function with V[ref] = 0.
+
+    Stops when ``(M_n - m_n) <= tol * |m_n|``.
     """
-    n = model.n_states
+    n_states = model.n_states
     P_R, r_R = _policy_kernel(model, policy_sa)
+    V = np.zeros(n_states, dtype=np.float64)
 
-    I = sp.eye(n, format="csr")
-    ones_col = sp.csr_matrix(np.ones((n, 1)))
-    top = sp.hstack([I - P_R, ones_col], format="csr")
-    bot = sp.csr_matrix(
-        (np.ones(1), (np.zeros(1, dtype=np.int64), np.array([ref_state], dtype=np.int64))),
-        shape=(1, n + 1),
+    log = ProgressLogger(min_interval=log_interval, prefix="    [eval] ")
+    log.log(f"start  iterative policy evaluation  tol={tol:g}", force=True)
+
+    m_n = -np.inf
+    M_n = np.inf
+    span = np.inf
+
+    for n in range(1, max_iter + 1):
+        V_new = r_R + P_R @ V
+        diff = V_new - V
+        m_n = float(diff.min())
+        M_n = float(diff.max())
+        span = M_n - m_n
+        denom = max(abs(m_n), 1e-12)
+
+        log.log(
+            f"iter {n:>5d}  m_n={m_n:+.6f}  M_n={M_n:+.6f}  "
+            f"span={span:.3e}  rel={span / denom:.3e}  elapsed={log.elapsed():5.1f}s"
+        )
+
+        if span <= tol * denom:
+            g = 0.5 * (m_n + M_n)
+            # V_new ~ V_inf + n*g; subtract V_new[ref] to remove the n*g drift
+            V_relative = V_new - V_new[ref_state]
+            log.log(
+                f"converged at iter {n}  g={g:.6f}  total {log.elapsed():.1f}s",
+                force=True,
+            )
+            return g, V_relative
+        V = V_new
+
+    raise RuntimeError(
+        f"policy evaluation did not converge in {max_iter} iters "
+        f"(last span={span:.3e}, m_n={m_n:.6f}, M_n={M_n:.6f}). "
+        f"This typically means the current policy induces a near-reducible "
+        f"Markov chain (multiple recurrent classes or a slow-mixing absorbing "
+        f"region near the buffer cap). PI's textbook guarantee assumes the "
+        f"MDP is unichain (notes p. 6); the F4C2 traffic MDP is only "
+        f"*weakly* unichain. Use Linear Programming instead (notes p. 11) -- "
+        f"--algo lp -- which works in the weakly-unichain regime."
     )
-    A = sp.vstack([top, bot], format="csc")      # csc for spsolve
-    b = np.concatenate([r_R, np.array([0.0])])
 
-    x = spsolve(A, b)
-    V = x[:n]
-    g = float(x[n])
-    return g, V
+
+def initial_unichain_policy(model: F4C2Model) -> np.ndarray:
+    """A deterministic policy that is guaranteed to be unichain.
+
+    Picks the *second* feasible action whenever a state has two:
+      * Phase 0 with non-empty queues: switch to first yellow
+      * Phase 3 with non-empty queues: advance to next combination's green
+    Single-action states (forced yellow advance, frozen green/all-red on
+    empty queues) keep their only action.
+
+    The induced chain alternates phases (l, 0) -> (l, 1) -> (l, 2) ->
+    (l, 3) -> ((l+1) mod S, 0) -> ..., visiting all (l, i) phases in a
+    single 8-slot cycle and reaching every queue configuration with
+    positive probability through arrivals. Hence irreducible / unichain.
+
+    This policy is intentionally wasteful (only one slot of green per
+    combination per cycle) and is unstable for high rho, but PI only
+    needs it to bootstrap the Poisson solve; subsequent iterations
+    improve to the optimum.
+    """
+    sa_start = model.sa_start
+    nacts = np.diff(sa_start)
+    policy = sa_start[:-1].astype(np.int64).copy()           # default first action
+    has_two = nacts == 2
+    policy[has_two] = sa_start[:-1][has_two] + 1             # pick second when available
+    return policy
 
 
 def policy_iteration(
@@ -209,16 +280,28 @@ def policy_iteration(
 ) -> PIResult:
     """Average-cost Policy Iteration (notes algorithm 1).
 
-    Alternates exact policy evaluation (sparse Poisson solve) with
-    one-step greedy improvement, stopping when the policy is stable.
+    Alternates policy evaluation (Poisson solve) with one-step greedy
+    improvement, stopping when the policy is stable.
+
+    Limitation: the notes prove correctness under the *unichain* MDP
+    assumption (every policy induces a unichain Markov chain). The F4C2
+    traffic MDP is only *weakly unichain* -- the optimal policy is
+    unichain, but intermediate policies generated by improvement can be
+    reducible (chain absorbed at the buffer cap with no service). When
+    this happens ``evaluate_policy`` raises a RuntimeError suggesting
+    Linear Programming instead.
     """
     n_states = model.n_states
     log = ProgressLogger(min_interval=log_interval, prefix="  [PI] ")
     log.log(f"start  n_states={n_states:,}  n_sa={model.n_sa:,}", force=True)
 
-    # initial policy: take the first feasible action at every state
+    # Step 0: pick a feasible stationary policy. "First action everywhere"
+    # picks 'keep green' / 'keep all-red' which leaves the chain stuck in
+    # the starting phase (multiple recurrent classes -> singular Poisson).
+    # The "always-switch when possible" alternative below cycles through
+    # all 8 phase configurations and is unichain.
     if initial_policy is None:
-        policy_sa = model.sa_start[:-1].copy().astype(np.int64)
+        policy_sa = initial_unichain_policy(model)
     else:
         policy_sa = initial_policy.astype(np.int64).copy()
 
@@ -227,7 +310,7 @@ def policy_iteration(
 
     for it in range(1, max_iter + 1):
         t_eval0 = time.time()
-        log.log(f"iter {it}  evaluating policy (sparse Poisson solve) ...", force=True)
+        log.log(f"iter {it}  evaluating policy (Poisson via successive approximation) ...", force=True)
         g, V = evaluate_policy(model, policy_sa, ref_state=ref_state)
         eval_dt = time.time() - t_eval0
 
@@ -259,3 +342,145 @@ def policy_iteration(
         policy_sa = policy_new
 
     raise RuntimeError(f"PI failed to converge in {max_iter} iters")
+
+
+# ----- Linear Programming -------------------------------------------------
+
+
+@dataclass
+class LPResult:
+    g: float                          # optimal cost-rate
+    z: np.ndarray                     # state-action frequencies, (n_sa,)
+    policy_sa: np.ndarray             # deterministic policy recovered from z
+    iterations: int                   # solver iterations (-1 if not exposed)
+    elapsed: float
+    status: str
+
+
+def linear_programming(
+    model: F4C2Model,
+    method: str = "highs",
+    log_interval: float = 1.0,
+    show_solver_log: bool = True,
+) -> LPResult:
+    """Average-cost MDP via the primal LP (notes algorithm 2, p. 10).
+
+    Variables           z_{x,a} = lim P(X_t = x, A_t = a)         (n_sa total)
+    Objective           min sum_{x,a} z_{x,a} * r(x, a)
+    Balance equations   sum_a z_{x,a} - sum_{y,a} z_{y,a} P(y,a,x) = 0   forall x
+    Normalisation       sum_{x,a} z_{x,a} = 1
+    Sign constraints    z_{x,a} >= 0
+
+    At the LP optimum z* is a basic feasible solution with at most |X|
+    nonzero entries -- one per state -- so the recovered policy
+    f*_{x,a} = z*_{x,a} / sum_b z*_{x,b} is deterministic.
+
+    The notes (p. 11) point out that LP also handles the *weakly unichain*
+    case (only the optimal policy must be unichain), unlike PI. The F4C2
+    traffic MDP is weakly unichain -- intermediate policies generated by
+    PI can be reducible (chain absorbed at the queue cap) -- so LP is the
+    correct second-method companion to VI for this problem.
+
+    The model uses the tau-transformed kernel; the balance equations
+    written for bar P collapse to those for the original P after
+    dividing through by tau, so the LP gives the same z* and g.
+    """
+    from scipy.optimize import linprog
+
+    n_states = model.n_states
+    n_sa = model.n_sa
+    log = ProgressLogger(min_interval=log_interval, prefix="  [LP] ")
+    log.log(
+        f"start  variables={n_sa:,}  constraints={n_states + 1:,}  method={method!r}",
+        force=True,
+    )
+
+    # M[x, sa] = 1 iff state-action pair sa belongs to state x.
+    log.log("building constraint matrix ...", force=True)
+    sa_indices = np.arange(n_sa, dtype=np.int64)
+    M = sp.csr_matrix(
+        (np.ones(n_sa, dtype=np.float64),
+         (model.sa_state, sa_indices)),
+        shape=(n_states, n_sa),
+    )
+    # T transposed has shape (n_states, n_sa) with entry (s', sa) = barP(s_a, a_a, s').
+    T_T = model.T.transpose().tocsr()
+    A_balance_full = (M - T_T).tocsr()
+
+    # The full balance matrix is rank-deficient by 1: the rows sum identically
+    # to zero because every transition is counted once as outflow and once as
+    # inflow (flow conservation). In floating-point each row-sum is 1e-16 not
+    # exactly 0, so HiGHS's dependent-equations presolve does not detect it
+    # and IPM's Newton system A.D.A^T becomes singular -- the duality gap
+    # freezes at O(1) regardless of iteration count. Drop the first balance
+    # row by hand; the remaining rows + the normalisation row give a full-rank
+    # n_states x n_sa system equivalent to the original LP. This is the
+    # standard MDP-LP normalization (e.g. Puterman 1994, eq. 8.8.5).
+    A_balance = A_balance_full[1:, :]
+    A_norm = sp.csr_matrix(np.ones((1, n_sa), dtype=np.float64))
+    A_eq = sp.vstack([A_balance, A_norm], format="csr")
+    b_eq = np.zeros(n_states, dtype=np.float64)        # (n_states - 1) zeros + 1 one
+    b_eq[-1] = 1.0
+    c = model.cost.astype(np.float64)
+
+    log.log(
+        f"A_eq shape={A_eq.shape}  nnz={A_eq.nnz:,}  "
+        f"calling scipy.optimize.linprog ...",
+        force=True,
+    )
+
+    # show_solver_log streams HiGHS iteration log to stdout (our progress source for the LP).
+    options: dict = {"disp": show_solver_log, "presolve": True}
+
+    # When using interior-point, disable HiGHS's "crossover" step. Crossover
+    # pivots from the IPM interior point to a basic feasible solution -- it
+    # does its own simplex-like work and inherits *exactly* the dual-simplex
+    # degeneracy we are using IPM to escape from. We don't need a basic
+    # solution: g* is the IPM objective, and the deterministic policy is
+    # recovered by argmax z within each state's segment, which works fine
+    # for the slightly-non-basic IPM solution.
+    if method == "highs-ipm":
+        options["run_crossover"] = "off"
+
+    result = linprog(
+        c=c,
+        A_eq=A_eq,
+        b_eq=b_eq,
+        bounds=(0.0, None),
+        method=method,
+        options=options,
+    )
+
+    if not result.success:
+        raise RuntimeError(f"LP failed to solve cleanly: {result.message}")
+
+    z = np.asarray(result.x, dtype=np.float64)
+    g = float(result.fun)
+
+    # Recover deterministic policy: for each state pick whichever action has
+    # the larger z (single-action states automatically pick their lone sa).
+    sa_start = model.sa_start
+    nacts = np.diff(sa_start)
+    first = sa_start[:-1]
+    second = first + 1
+    has_two = nacts == 2
+    z_first = z[first]
+    z_second = np.zeros_like(z_first)
+    z_second[has_two] = z[second[has_two]]
+    pick_second = z_second > z_first
+    policy_sa = np.where(pick_second, second, first).astype(np.int64)
+
+    iters = int(getattr(result, "nit", -1))
+    log.log(
+        f"converged  g={g:.6f}  iters={iters}  total {log.elapsed():.1f}s",
+        force=True,
+    )
+
+    return LPResult(
+        g=g,
+        z=z,
+        policy_sa=policy_sa,
+        iterations=iters,
+        elapsed=log.elapsed(),
+        status=str(result.message),
+    )

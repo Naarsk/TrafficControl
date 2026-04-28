@@ -1,0 +1,76 @@
+
+=== rho = 0.80    q_f = 0.400    K = 15    tau = 0.5 ===
+  [build] K=15, n_states=524,288
+  [build] states    98,305/524,288 ( 18.8%)  sa=  147,454  nnz= 2,214,856  elapsed=  1.1s  eta= 4.9s
+  [build] states   180,225/524,288 ( 34.4%)  sa=  270,334  nnz= 4,068,408  elapsed=  2.1s  eta= 4.1s
+  [build] states   245,761/524,288 ( 46.9%)  sa=  368,638  nnz= 5,545,000  elapsed=  3.2s  eta= 3.6s
+  [build] states   311,297/524,288 ( 59.4%)  sa=  466,942  nnz= 7,021,592  elapsed=  4.3s  eta= 2.9s
+  [build] states   376,833/524,288 ( 71.9%)  sa=  565,246  nnz= 8,498,184  elapsed=  5.3s  eta= 2.1s
+  [build] states   442,369/524,288 ( 84.4%)  sa=  663,550  nnz= 9,974,776  elapsed=  6.6s  eta= 1.2s
+  [build] states   507,905/524,288 ( 96.9%)  sa=  761,854  nnz=11,326,376  elapsed=  7.7s  eta= 0.2s
+  [build] states 524,288/524,288 (100.0%)  sa=786,428  nnz=11,566,532  elapsed=7.9s
+  [build] assembling sparse CSR ...
+  [build] applying strong-aperiodicity transformation (tau=0.5) ...
+  [build] model ready  n_states=524,288  n_sa=786,428  nnz=11,606,520  total build 10.3s
+
+--- Value Iteration (K=15) ---
+  [VI] start  n_states=524,288  n_sa=786,428  tol=1e-06
+  [VI] iter    22  m_n=+5.339851  M_n=+49.781542  span=4.444e+01  rel=8.323e+00  elapsed=   1.0s
+  [VI] iter    43  m_n=+7.124165  M_n=+37.515240  span=3.039e+01  rel=4.266e+00  elapsed=   2.1s
+  [VI] iter    65  m_n=+8.199468  M_n=+30.224895  span=2.203e+01  rel=2.686e+00  elapsed=   3.1s
+  [VI] iter    89  m_n=+8.944664  M_n=+25.718518  span=1.677e+01  rel=1.875e+00  elapsed=   4.1s
+  [VI] iter   113  m_n=+9.444261  M_n=+22.336901  span=1.289e+01  rel=1.365e+00  elapsed=   5.2s
+  [VI] iter   136  m_n=+9.781852  M_n=+19.719269  span=9.937e+00  rel=1.016e+00  elapsed=   6.2s
+  [VI] iter   156  m_n=+9.999827  M_n=+17.913810  span=7.914e+00  rel=7.914e-01  elapsed=   7.2s
+  [VI] iter   175  m_n=+10.161057  M_n=+16.576229  span=6.415e+00  rel=6.313e-01  elapsed=   8.2s
+  [VI] iter   196  m_n=+10.300430  M_n=+15.425393  span=5.125e+00  rel=4.975e-01  elapsed=   9.3s
+  [VI] iter   218  m_n=+10.413441  M_n=+14.491759  span=4.078e+00  rel=3.916e-01  elapsed=  10.3s
+  [VI] iter   243  m_n=+10.511275  M_n=+13.670378  span=3.159e+00  rel=3.005e-01  elapsed=  11.3s
+  [VI] iter   270  m_n=+10.589905  M_n=+12.989529  span=2.400e+00  rel=2.266e-01  elapsed=  12.3s
+  [VI] iter   299  m_n=+10.651543  M_n=+12.433854  span=1.782e+00  rel=1.673e-01  elapsed=  13.3s
+  [VI] iter   327  m_n=+10.694829  M_n=+12.028249  span=1.333e+00  rel=1.247e-01  elapsed=  14.3s
+  [VI] iter   353  m_n=+10.724637  M_n=+11.740333  span=1.016e+00  rel=9.471e-02  elapsed=  15.3s
+  [VI] iter   383  m_n=+10.749963  M_n=+11.489874  span=7.399e-01  rel=6.883e-02  elapsed=  16.4s
+  [VI] iter   413  m_n=+10.768214  M_n=+11.305922  span=5.377e-01  rel=4.993e-02  elapsed=  17.4s
+  [VI] iter   443  m_n=+10.781380  M_n=+11.171463  span=3.901e-01  rel=3.618e-02  elapsed=  18.4s
+  [VI] iter   474  m_n=+10.791150  M_n=+11.070709  span=2.796e-01  rel=2.591e-02  elapsed=  19.4s
+  [VI] iter   504  m_n=+10.797939  M_n=+11.000258  span=2.023e-01  rel=1.874e-02  elapsed=  20.5s
+  [VI] iter   534  m_n=+10.802842  M_n=+10.949168  span=1.463e-01  rel=1.355e-02  elapsed=  21.5s
+  [VI] iter   563  m_n=+10.806282  M_n=+10.913215  span=1.069e-01  rel=9.895e-03  elapsed=  22.5s
+  [VI] iter   592  m_n=+10.808795  M_n=+10.886921  span=7.813e-02  rel=7.228e-03  elapsed=  23.5s
+  [VI] iter   620  m_n=+10.810576  M_n=+10.868267  span=5.769e-02  rel=5.337e-03  elapsed=  24.5s
+  [VI] iter   649  m_n=+10.811930  M_n=+10.854071  span=4.214e-02  rel=3.898e-03  elapsed=  25.5s
+  [VI] iter   680  m_n=+10.812977  M_n=+10.843098  span=3.012e-02  rel=2.786e-03  elapsed=  26.5s
+  [VI] iter   709  m_n=+10.813684  M_n=+10.835685  span=2.200e-02  rel=2.035e-03  elapsed=  27.5s
+  [VI] iter   739  m_n=+10.814216  M_n=+10.830112  span=1.590e-02  rel=1.470e-03  elapsed=  28.6s
+  [VI] iter   769  m_n=+10.814600  M_n=+10.826086  span=1.149e-02  rel=1.062e-03  elapsed=  29.6s
+  [VI] iter   798  m_n=+10.814869  M_n=+10.823259  span=8.389e-03  rel=7.757e-04  elapsed=  30.6s
+  [VI] iter   828  m_n=+10.815072  M_n=+10.821133  span=6.061e-03  rel=5.604e-04  elapsed=  31.6s
+  [VI] iter   858  m_n=+10.815219  M_n=+10.819598  span=4.379e-03  rel=4.049e-04  elapsed=  32.6s
+  [VI] iter   888  m_n=+10.815324  M_n=+10.818489  span=3.164e-03  rel=2.926e-04  elapsed=  33.6s
+  [VI] iter   918  m_n=+10.815401  M_n=+10.817687  span=2.286e-03  rel=2.114e-04  elapsed=  34.6s
+  [VI] iter   947  m_n=+10.815454  M_n=+10.817124  span=1.670e-03  rel=1.544e-04  elapsed=  35.6s
+  [VI] iter   978  m_n=+10.815496  M_n=+10.816689  span=1.193e-03  rel=1.103e-04  elapsed=  36.7s
+  [VI] iter  1008  m_n=+10.815525  M_n=+10.816387  span=8.623e-04  rel=7.973e-05  elapsed=  37.7s
+  [VI] iter  1036  m_n=+10.815544  M_n=+10.816181  span=6.367e-04  rel=5.886e-05  elapsed=  38.7s
+  [VI] iter  1065  m_n=+10.815559  M_n=+10.816024  span=4.650e-04  rel=4.299e-05  elapsed=  39.7s
+  [VI] iter  1095  m_n=+10.815571  M_n=+10.815907  span=3.360e-04  rel=3.106e-05  elapsed=  40.7s
+  [VI] iter  1124  m_n=+10.815578  M_n=+10.815824  span=2.454e-04  rel=2.269e-05  elapsed=  41.7s
+  [VI] iter  1154  m_n=+10.815584  M_n=+10.815762  span=1.773e-04  rel=1.639e-05  elapsed=  42.7s
+  [VI] iter  1183  m_n=+10.815589  M_n=+10.815718  span=1.295e-04  rel=1.197e-05  elapsed=  43.8s
+  [VI] iter  1215  m_n=+10.815592  M_n=+10.815683  span=9.156e-05  rel=8.465e-06  elapsed=  44.8s
+  [VI] iter  1246  m_n=+10.815594  M_n=+10.815660  span=6.544e-05  rel=6.050e-06  elapsed=  45.8s
+  [VI] iter  1276  m_n=+10.815596  M_n=+10.815643  span=4.728e-05  rel=4.371e-06  elapsed=  46.8s
+  [VI] iter  1306  m_n=+10.815597  M_n=+10.815631  span=3.416e-05  rel=3.158e-06  elapsed=  47.8s
+  [VI] iter  1332  m_n=+10.815598  M_n=+10.815623  span=2.577e-05  rel=2.383e-06  elapsed=  48.9s
+  [VI] iter  1358  m_n=+10.815598  M_n=+10.815618  span=1.945e-05  rel=1.798e-06  elapsed=  49.9s
+  [VI] iter  1383  m_n=+10.815599  M_n=+10.815613  span=1.483e-05  rel=1.371e-06  elapsed=  50.9s
+  [VI] iter  1407  m_n=+10.815599  M_n=+10.815610  span=1.144e-05  rel=1.057e-06  elapsed=  51.9s
+  [VI] converged at iter 1413  g=10.815604  [m_n=10.815599, M_n=10.815610]  total 52.2s
+  -> g_VI = 10.815604    E[W]_VI = 13.520 s    iters = 1413    second-action picks = 159292/262140
+
+  paper Table 1 target E[W] = 13.5 s
+    delta_VI@K=15       = +0.020 s
+
+  [persist] results saved to results\20260428_144601_single_rho0.80_K15.json
+  [persist] xlsx saved to results\20260428_144602_single_rho0.80_K15.xlsx
