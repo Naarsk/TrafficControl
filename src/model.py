@@ -174,100 +174,69 @@ class F4C2Model:
     # -------- sparse kernel build --------
 
     def _build(self) -> None:
-        """Enumerate all (s, a) pairs and assemble the sparse transition kernel.
+        """Build the sparse transition kernel.
 
-        Strategy:
-          * iterate states in encoded order, so sa indices are consecutive
-            within a state and ``sa_start`` is just a cumulative count;
-          * for each (s, a), enumerate up to 2^F per-flow outcome combos;
-          * store rows/cols/data lists, then build CSR once at the end;
-          * apply the strong-aperiodicity transformation in matrix form
-            (T = tau * T_raw + (1 - tau) * I_sa_to_s).
+        Dispatches to a compiled Cython kernel
+        (``src._build_kernel.build_f4c2_kernel``) when available; falls
+        back to the pure-Python implementation in ``_build_python``
+        otherwise. Both paths produce the same arrays
+        (``sa_state``, ``sa_start``, ``cost``, plus the raw triplets
+        for CSR construction); the strongly-aperiodicity
+        ``tau``-transform is applied identically in Python afterwards.
         """
         params = self.params
-        F = self.F
         n_states = self.n_states
-        q = params.q
         tau = params.tau
-
         log = ProgressLogger(min_interval=1.0, prefix="  [build] ")
         log.log(f"K={params.K}, n_states={n_states:,}", force=True)
 
-        # output buffers; sa_start[s+1] - sa_start[s] gives # actions at state s
-        sa_start = np.zeros(n_states + 1, dtype=np.int64)
-        sa_state_list: list[int] = []
-        cost_list: list[float] = []
-        rows: list[int] = []
-        cols: list[int] = []
-        data: list[float] = []
-
-        sa_idx = 0
-
-        for s in range(n_states):
-            k, l, i = self.decode(s)
-            all_zero = (k[0] == 0 and k[1] == 0 and k[2] == 0 and k[3] == 0)
-            cost_s = float(k[0] + k[1] + k[2] + k[3])
-            actions = self.feasible_actions(l, i, all_zero)
-
-            for (l_next, i_next) in actions:
-                # which flows can depart in the coming slot?
-                #   active combination flows during green/yellow phases (i' in {0,1,2});
-                #   nobody departs during all-red (i' = 3).
-                if i_next == 3:
-                    active_flows: frozenset[int] = frozenset()
-                else:
-                    active_flows = F4C2_COMBINATIONS[l_next]
-
-                # per-flow distributions (length 4)
-                dists = [
-                    self._per_flow_dist(k[f], f in active_flows, q[f])
-                    for f in range(F)
-                ]
-
-                # joint successors via cartesian product (<= 16 outcomes for F=4)
-                for outcome in itertools.product(*dists):
-                    k_next = (outcome[0][0], outcome[1][0], outcome[2][0], outcome[3][0])
-                    p = outcome[0][1] * outcome[1][1] * outcome[2][1] * outcome[3][1]
-                    if p <= 0.0:
-                        continue
-                    s_next = self.encode(k_next, l_next, i_next)
-                    rows.append(sa_idx)
-                    cols.append(s_next)
-                    data.append(p)
-
-                cost_list.append(cost_s)
-                sa_state_list.append(s)
-                sa_idx += 1
-
-            sa_start[s + 1] = sa_idx
-
-            # progress log: every ~1 s
-            if (s & 0x3FFF) == 0:
-                frac = (s + 1) / n_states
+        # Try the fastest available backend.
+        # 1. Cython (compiled .pyd/.so). Fastest, but needs MSVC/gcc to build.
+        # 2. Numba (LLVM JIT). Pip-installable, no compiler needed.
+        # 3. Pure-Python (the existing reference impl). Always works.
+        build_f4c2_kernel = None
+        backend = "python"
+        try:
+            from src._build_kernel import build_f4c2_kernel as _cy_kernel
+            build_f4c2_kernel = _cy_kernel
+            backend = "cython"
+        except ImportError:
+            try:
+                from src._build_kernel_numba import build_f4c2_kernel as _nb_kernel
+                build_f4c2_kernel = _nb_kernel
+                backend = "numba"
+            except ImportError:
                 log.log(
-                    f"states {s + 1:>9,}/{n_states:,} ({100 * frac:5.1f}%)  "
-                    f"sa={sa_idx:>9,}  nnz={len(data):>10,}  "
-                    f"elapsed={log.elapsed():5.1f}s  eta={fmt_eta(log.elapsed(), frac)}"
+                    "Neither Cython extension nor Numba available; falling back "
+                    "to Python (slow at large K).",
+                    force=True,
                 )
 
-        log.log(
-            f"states {n_states:,}/{n_states:,} (100.0%)  sa={sa_idx:,}  "
-            f"nnz={len(data):,}  elapsed={log.elapsed():.1f}s",
-            force=True,
-        )
+        if backend in ("cython", "numba"):
+            log.log(f"enumerating transitions ({backend}) ...", force=True)
+            q_arr = np.asarray(params.q, dtype=np.float64)
+            rows, cols, data, sa_state, sa_start, cost = build_f4c2_kernel(
+                params.K, q_arr,
+            )
+            n_sa = int(sa_state.shape[0])
+            log.log(
+                f"  -> n_sa={n_sa:,}  nnz_raw={rows.shape[0]:,}  "
+                f"elapsed={log.elapsed():.2f}s",
+                force=True,
+            )
+        else:
+            rows, cols, data, sa_state, sa_start, cost = self._build_python(log)
+            n_sa = int(sa_state.shape[0])
 
-        n_sa = sa_idx
         self.n_sa = n_sa
-        self.sa_state = np.asarray(sa_state_list, dtype=np.int64)
-        self.cost = np.asarray(cost_list, dtype=np.float64)
+        self.sa_state = sa_state
+        self.cost = cost
         self.sa_start = sa_start
 
-        # raw kernel
+        # Assemble raw kernel into a CSR matrix.
         log.log("assembling sparse CSR ...", force=True)
         T_raw = csr_matrix(
-            (np.asarray(data, dtype=np.float64),
-             (np.asarray(rows, dtype=np.int64),
-              np.asarray(cols, dtype=np.int64))),
+            (data, (rows, cols)),
             shape=(n_sa, n_states),
         )
 
@@ -282,9 +251,89 @@ class F4C2Model:
         self.T = (tau * T_raw + (1.0 - tau) * I_sa).tocsr()
 
         log.log(
-            f"model ready  n_states={n_states:,}  n_sa={n_sa:,}  "
+            f"model ready  backend={backend}  n_states={n_states:,}  n_sa={n_sa:,}  "
             f"nnz={self.T.nnz:,}  total build {log.elapsed():.1f}s",
             force=True,
+        )
+
+    def _build_python(
+        self, log: "ProgressLogger"
+    ) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+        """Pure-Python reference implementation of the kernel build.
+
+        Returns the same six arrays as the Cython kernel:
+        ``(rows, cols, data, sa_state, sa_start, cost)``. Used as a
+        fallback when the Cython extension isn't compiled, and as a
+        reference for correctness testing.
+        """
+        params = self.params
+        F = self.F
+        n_states = self.n_states
+        q = params.q
+
+        sa_start = np.zeros(n_states + 1, dtype=np.int64)
+        sa_state_list: list[int] = []
+        cost_list: list[float] = []
+        rows_list: list[int] = []
+        cols_list: list[int] = []
+        data_list: list[float] = []
+
+        sa_idx = 0
+
+        for s in range(n_states):
+            k, l, i = self.decode(s)
+            all_zero = (k[0] == 0 and k[1] == 0 and k[2] == 0 and k[3] == 0)
+            cost_s = float(k[0] + k[1] + k[2] + k[3])
+            actions = self.feasible_actions(l, i, all_zero)
+
+            for (l_next, i_next) in actions:
+                if i_next == 3:
+                    active_flows: frozenset[int] = frozenset()
+                else:
+                    active_flows = F4C2_COMBINATIONS[l_next]
+
+                dists = [
+                    self._per_flow_dist(k[f], f in active_flows, q[f])
+                    for f in range(F)
+                ]
+
+                for outcome in itertools.product(*dists):
+                    k_next = (outcome[0][0], outcome[1][0], outcome[2][0], outcome[3][0])
+                    p = outcome[0][1] * outcome[1][1] * outcome[2][1] * outcome[3][1]
+                    if p <= 0.0:
+                        continue
+                    s_next = self.encode(k_next, l_next, i_next)
+                    rows_list.append(sa_idx)
+                    cols_list.append(s_next)
+                    data_list.append(p)
+
+                cost_list.append(cost_s)
+                sa_state_list.append(s)
+                sa_idx += 1
+
+            sa_start[s + 1] = sa_idx
+
+            if (s & 0x3FFF) == 0:
+                frac = (s + 1) / n_states
+                log.log(
+                    f"states {s + 1:>9,}/{n_states:,} ({100 * frac:5.1f}%)  "
+                    f"sa={sa_idx:>9,}  nnz={len(data_list):>10,}  "
+                    f"elapsed={log.elapsed():5.1f}s  eta={fmt_eta(log.elapsed(), frac)}"
+                )
+
+        log.log(
+            f"states {n_states:,}/{n_states:,} (100.0%)  sa={sa_idx:,}  "
+            f"nnz={len(data_list):,}  elapsed={log.elapsed():.1f}s",
+            force=True,
+        )
+
+        return (
+            np.asarray(rows_list, dtype=np.int64),
+            np.asarray(cols_list, dtype=np.int64),
+            np.asarray(data_list, dtype=np.float64),
+            np.asarray(sa_state_list, dtype=np.int64),
+            sa_start,
+            np.asarray(cost_list, dtype=np.float64),
         )
 
     # -------- diagnostics --------

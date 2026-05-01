@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.29 (MiKTeX 26.2) (preloaded format=pdflatex 2026.4.9)  28 APR 2026 15:41
+This is pdfTeX, Version 3.141592653-2.6-1.40.29 (MiKTeX 26.2) (preloaded format=pdflatex 2026.4.9)  28 APR 2026 15:42
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -650,72 +650,23 @@ File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 t-msb.cfg
 File: mt-msb.cfg 2005/06/01 v1.0 microtype config. file: AMS symbols (b) (RS)
 )
-
-LaTeX Warning: Citation `haijema2008' on page 1 undefined on input line 39.
-
 LaTeX Font Info:    External font `lmex10' loaded for size
 (Font)              <10> on input line 45.
 LaTeX Font Info:    External font `lmex10' loaded for size
 (Font)              <7> on input line 45.
 LaTeX Font Info:    External font `lmex10' loaded for size
 (Font)              <5> on input line 45.
-
-LaTeX Warning: Citation `haijema2008' on page 1 undefined on input line 61.
-
 LaTeX Font Info:    External font `lmex10' loaded for size
 (Font)              <10.95> on input line 65.
-
-LaTeX Warning: Reference `sec:their' on page 1 undefined on input line 86.
-
-
-LaTeX Warning: Reference `sec:our' on page 1 undefined on input line 87.
-
-
-LaTeX Warning: Reference `sec:impl' on page 1 undefined on input line 89.
-
-
-LaTeX Warning: Reference `sec:results' on page 1 undefined on input line 90.
-
-
-LaTeX Warning: Reference `sec:discuss' on page 1 undefined on input line 92.
-
-
-LaTeX Warning: Reference `sec:conc' on page 1 undefined on input line 94.
-
-[1
+ [1
 
 {C:/Users/leonardo.cruciani/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}{C
 :/Users/leonardo.cruciani/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-e
 c.enc}{C:/Users/leonardo.cruciani/AppData/Local/Programs/MiKTeX/fonts/enc/dvips
 /lm/lm-mathit.enc}{C:/Users/leonardo.cruciani/AppData/Local/Programs/MiKTeX/fon
 ts/enc/dvips/lm/lm-mathsy.enc}{C:/Users/leonardo.cruciani/AppData/Local/Program
-s/MiKTeX/fonts/enc/dvips/lm/lm-rm.enc}]
-
-LaTeX Warning: Reference `ssec:cap' on page 2 undefined on input line 123.
-
-
-LaTeX Warning: Citation `haijema2008' on page 2 undefined on input line 139.
-
-
-LaTeX Warning: Citation `haijema2008' on page 2 undefined on input line 154.
-
-
-LaTeX Warning: Citation `haijema2008' on page 2 undefined on input line 165.
-
-
-LaTeX Warning: Citation `haijema2008' on page 2 undefined on input line 185.
-
-
-LaTeX Warning: Citation `haijema2008' on page 2 undefined on input line 189.
-
-[2{C:/Users/leonardo.cruciani/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/
-lm-mathex.enc}]
-
-LaTeX Warning: Reference `sec:our' on page 3 undefined on input line 220.
-
-
-LaTeX Warning: Reference `sec:results' on page 3 undefined on input line 220.
-
+s/MiKTeX/fonts/enc/dvips/lm/lm-rm.enc}] [2{C:/Users/leonardo.cruciani/AppData/L
+ocal/Programs/MiKTeX/fonts/enc/dvips/lm/lm-mathex.enc}]
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
 (hyperref)                removing `math shift' on input line 240.
@@ -723,32 +674,11 @@ Package hyperref Warning: Token not allowed in a PDF string (Unicode):
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
 (hyperref)                removing `math shift' on input line 240.
-
-
-LaTeX Warning: Citation `haijema2008' on page 3 undefined on input line 243.
-
-
-LaTeX Warning: Reference `sec:discuss' on page 3 undefined on input line 250.
-
-
-LaTeX Warning: Citation `haijema2008' on page 3 undefined on input line 257.
 
 [3]
-
-LaTeX Warning: Citation `haijema2008' on page 4 undefined on input line 271.
-
-
-LaTeX Warning: Citation `haijema2008' on page 4 undefined on input line 280.
-
 Package hyperref Info: bookmark level for unknown algorithm defaults to 0 on in
 put line 294.
-
-LaTeX Warning: Reference `sec:results' on page 4 undefined on input line 325.
-
-[4]
-
-LaTeX Warning: Citation `notes' on page 5 undefined on input line 403.
-
+ [4]
 LaTeX Font Info:    Trying to load font information for T1+lmtt on input line 4
 09.
 
@@ -760,30 +690,7 @@ Package microtype Info: Loading generic protrusion settings for font family
 (microtype)             `lmtt' (encoding: T1).
 (microtype)             For optimal results, create family-specific settings.
 (microtype)             See the microtype manual for details.
-
-
-LaTeX Warning: Citation `puterman1994' on page 5 undefined on input line 421.
-
-[5]
-
-LaTeX Warning: Reference `tab:cross' on page 6 undefined on input line 440.
-
-
-LaTeX Warning: Reference `ssec:pi-fail' on page 6 undefined on input line 461.
-
-
-LaTeX Warning: Reference `tab:paper' on page 6 undefined on input line 468.
-
-
-LaTeX Warning: Citation `haijema2008' on page 6 undefined on input line 469.
-
-
-LaTeX Warning: Citation `haijema2008' on page 6 undefined on input line 482.
-
-
-LaTeX Warning: Citation `haijema2008' on page 6 undefined on input line 482.
-
-[6]
+ [5] [6]
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
 (hyperref)                removing `math shift' on input line 507.
@@ -803,9 +710,6 @@ Package hyperref Warning: Token not allowed in a PDF string (Unicode):
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
 (hyperref)                removing `math shift' on input line 530.
-
-
-LaTeX Warning: Reference `tab:K' on page 7 undefined on input line 532.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
@@ -838,28 +742,15 @@ orithms.md\T1/lmr/m/n/10.95 (-20) ),
 LaTeX2e <2025-11-01>
 L3 programming layer <2026-01-19>
  ***********
-
-
-LaTeX Warning: There were undefined references.
-
-
-LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
-
-
-Package rerunfilecheck Warning: File `report.out' has changed.
-(rerunfilecheck)                Rerun to get outlines right
-(rerunfilecheck)                or use package `bookmark'.
-
-Package rerunfilecheck Info: Checksums for `report.out':
-(rerunfilecheck)             Before: D0D40D83A648B84413AC41969081ACD4;617
-(rerunfilecheck)             After:  ADA0C742517EB236CDEEA63B8028E123;4034.
+Package rerunfilecheck Info: File `report.out' has not changed.
+(rerunfilecheck)             Checksum: ADA0C742517EB236CDEEA63B8028E123;4034.
  ) 
 Here is how much of TeX's memory you used:
- 14196 strings out of 467867
- 223974 string characters out of 5412527
- 675348 words of memory out of 5000000
- 42565 multiletter control sequences out of 15000+600000
- 728559 words of font info for 227 fonts, out of 8000000 for 9000
+ 14217 strings out of 467867
+ 224268 string characters out of 5412527
+ 676436 words of memory out of 5000000
+ 42584 multiletter control sequences out of 15000+600000
+ 728689 words of font info for 228 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  75i,12n,79p,1005b,594s stack positions out of 10000i,1000n,20000p,200000b,200000s
 <C:/Users/leonardo.cruciani/AppData/Local/Programs/MiKTeX/fonts/type1/public/
@@ -887,9 +778,9 @@ a/Local/Programs/MiKTeX/fonts/type1/public/lm/lmsy8.pfb><C:/Users/leonardo.cruc
 iani/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmtt10.pfb><C:/Users/l
 eonardo.cruciani/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/symb
 ols/msbm10.pfb>
-Output written on report.pdf (8 pages, 408151 bytes).
+Output written on report.pdf (8 pages, 420407 bytes).
 PDF statistics:
- 239 PDF objects out of 1000 (max. 8388607)
+ 327 PDF objects out of 1000 (max. 8388607)
  55 named destinations out of 1000 (max. 500000)
- 55849 words of extra memory for PDF output out of 61914 (max. 10000000)
+ 56001 words of extra memory for PDF output out of 61914 (max. 10000000)
 
