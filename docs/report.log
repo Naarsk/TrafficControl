@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.29 (MiKTeX 26.2) (preloaded format=pdflatex 2026.4.9)  28 APR 2026 15:42
+This is pdfTeX, Version 3.141592653-2.6-1.40.29 (MiKTeX 26.2) (preloaded format=pdflatex 2026.4.9)  4 MAY 2026 13:25
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -484,8 +484,29 @@ Package xcolor Info: Model `HSB' substituted by `hsb' on input line 1370.
 Package xcolor Info: Model `Gray' substituted by `gray' on input line 1371.
 Package xcolor Info: Model `wave' substituted by `hsb' on input line 1372.
 )
-Package hyperref Info: Option `colorlinks' set `true' on input line 21.
-LaTeX Font Info:    Trying to load font information for T1+lmr on input line 34
+(C:\Users\leonardo.cruciani\AppData\Local\Programs\MiKTeX\tex/latex/graphics\gr
+aphicx.sty
+Package: graphicx 2024/12/31 v1.2e Enhanced LaTeX Graphics (DPC,SPQR)
+
+(C:\Users\leonardo.cruciani\AppData\Local\Programs\MiKTeX\tex/latex/graphics\gr
+aphics.sty
+Package: graphics 2024/08/06 v1.4g Standard LaTeX Graphics (DPC,SPQR)
+
+(C:\Users\leonardo.cruciani\AppData\Local\Programs\MiKTeX\tex/latex/graphics\tr
+ig.sty
+Package: trig 2023/12/02 v1.11 sin cos tan (DPC)
+)
+(C:\Users\leonardo.cruciani\AppData\Local\Programs\MiKTeX\tex/latex/graphics-cf
+g\graphics.cfg
+File: graphics.cfg 2016/06/04 v1.11 sample graphics configuration
+)
+Package graphics Info: Driver file: pdftex.def on input line 106.
+)
+\Gin@req@height=\dimen185
+\Gin@req@width=\dimen186
+)
+Package hyperref Info: Option `colorlinks' set `true' on input line 23.
+LaTeX Font Info:    Trying to load font information for T1+lmr on input line 36
 .
 
 (C:\Users\leonardo.cruciani\AppData\Local\Programs\MiKTeX\tex/latex/lm\t1lmr.fd
@@ -498,24 +519,24 @@ File: l3backend-pdftex.def 2025-10-09 L3 backend support: PDF output (pdfTeX)
 ) (report.aux)
 \openout1 = `report.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 34.
-LaTeX Font Info:    ... okay on input line 34.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 34.
-LaTeX Font Info:    ... okay on input line 34.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 34.
-LaTeX Font Info:    ... okay on input line 34.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 34.
-LaTeX Font Info:    ... okay on input line 34.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 34.
-LaTeX Font Info:    ... okay on input line 34.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 34.
-LaTeX Font Info:    ... okay on input line 34.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 34.
-LaTeX Font Info:    ... okay on input line 34.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 34.
-LaTeX Font Info:    ... okay on input line 34.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 34.
-LaTeX Font Info:    ... okay on input line 34.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 36.
+LaTeX Font Info:    ... okay on input line 36.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 36.
+LaTeX Font Info:    ... okay on input line 36.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 36.
+LaTeX Font Info:    ... okay on input line 36.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 36.
+LaTeX Font Info:    ... okay on input line 36.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 36.
+LaTeX Font Info:    ... okay on input line 36.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 36.
+LaTeX Font Info:    ... okay on input line 36.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 36.
+LaTeX Font Info:    ... okay on input line 36.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 36.
+LaTeX Font Info:    ... okay on input line 36.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 36.
+LaTeX Font Info:    ... okay on input line 36.
 
 *geometry* driver: auto-detecting
 *geometry* detected driver: pdftex
@@ -551,18 +572,18 @@ LaTeX Font Info:    ... okay on input line 34.
 * \@reversemarginfalse
 * (1in=72.27pt=25.4mm, 1cm=28.453pt)
 
-Package hyperref Info: Link coloring ON on input line 34.
+Package hyperref Info: Link coloring ON on input line 36.
 (report.out) (report.out)
 \@outlinefile=\write3
 \openout3 = `report.out'.
 
-LaTeX Info: Redefining \microtypecontext on input line 34.
-Package microtype Info: Applying patch `item' on input line 34.
-Package microtype Info: Applying patch `toc' on input line 34.
-Package microtype Info: Applying patch `eqnum' on input line 34.
-Package microtype Info: Applying patch `footnote' on input line 34.
-Package microtype Info: Applying patch `verbatim' on input line 34.
-LaTeX Info: Redefining \microtypesetup on input line 34.
+LaTeX Info: Redefining \microtypecontext on input line 36.
+Package microtype Info: Applying patch `item' on input line 36.
+Package microtype Info: Applying patch `toc' on input line 36.
+Package microtype Info: Applying patch `eqnum' on input line 36.
+Package microtype Info: Applying patch `footnote' on input line 36.
+Package microtype Info: Applying patch `verbatim' on input line 36.
+LaTeX Info: Redefining \microtypesetup on input line 36.
 Package microtype Info: Generating PDF output.
 Package microtype Info: Character protrusion enabled (level 2).
 Package microtype Info: Using default protrusion set `alltext'.
@@ -583,52 +604,62 @@ File: mt-cmr.cfg 2013/05/19 v2.2 microtype config. file: Computer Modern Roman
 \supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
 \scratchcounter=\count328
-\scratchdimen=\dimen185
+\scratchdimen=\dimen187
 \scratchbox=\box59
 \nofMPsegments=\count329
 \nofMParguments=\count330
 \everyMPshowfont=\toks38
 \MPscratchCnt=\count331
-\MPscratchDim=\dimen186
+\MPscratchDim=\dimen188
 \MPnumerator=\count332
 \makeMPintoPDFobject=\count333
 \everyMPtoPDFconversion=\toks39
 )
+(C:\Users\leonardo.cruciani\AppData\Local\Programs\MiKTeX\tex/latex/epstopdf-pk
+g\epstopdf-base.sty
+Package: epstopdf-base 2020-01-24 v2.11 Base part for package epstopdf
+Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 4
+85.
+
+(C:\Users\leonardo.cruciani\AppData\Local\Programs\MiKTeX\tex/latex/00miktex\ep
+stopdf-sys.cfg
+File: epstopdf-sys.cfg 2021/03/18 v2.0 Configuration of epstopdf for MiKTeX
+))
 LaTeX Font Info:    Trying to load font information for OT1+lmr on input line 3
-6.
+8.
 
 (C:\Users\leonardo.cruciani\AppData\Local\Programs\MiKTeX\tex/latex/lm\ot1lmr.f
 d
 File: ot1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
 LaTeX Font Info:    Trying to load font information for OML+lmm on input line 3
-6.
+8.
 
 (C:\Users\leonardo.cruciani\AppData\Local\Programs\MiKTeX\tex/latex/lm\omllmm.f
 d
 File: omllmm.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
 LaTeX Font Info:    Trying to load font information for OMS+lmsy on input line 
-36.
+38.
 
 (C:\Users\leonardo.cruciani\AppData\Local\Programs\MiKTeX\tex/latex/lm\omslmsy.
 fd
 File: omslmsy.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
 LaTeX Font Info:    Trying to load font information for OMX+lmex on input line 
-36.
+38.
 
 (C:\Users\leonardo.cruciani\AppData\Local\Programs\MiKTeX\tex/latex/lm\omxlmex.
 fd
 File: omxlmex.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <12> on input line 36.
+(Font)              <12> on input line 38.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <8> on input line 36.
+(Font)              <8> on input line 38.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <6> on input line 36.
-LaTeX Font Info:    Trying to load font information for U+msa on input line 36.
+(Font)              <6> on input line 38.
+LaTeX Font Info:    Trying to load font information for U+msa on input line 38.
 
 
 (C:\Users\leonardo.cruciani\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\um
@@ -639,7 +670,7 @@ File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 t-msa.cfg
 File: mt-msa.cfg 2006/02/04 v1.1 microtype config. file: AMS symbols (a) (RS)
 )
-LaTeX Font Info:    Trying to load font information for U+msb on input line 36.
+LaTeX Font Info:    Trying to load font information for U+msb on input line 38.
 
 
 (C:\Users\leonardo.cruciani\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\um
@@ -651,13 +682,13 @@ t-msb.cfg
 File: mt-msb.cfg 2005/06/01 v1.0 microtype config. file: AMS symbols (b) (RS)
 )
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <10> on input line 45.
+(Font)              <10> on input line 47.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <7> on input line 45.
+(Font)              <7> on input line 47.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <5> on input line 45.
+(Font)              <5> on input line 47.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <10.95> on input line 65.
+(Font)              <10.95> on input line 67.
  [1
 
 {C:/Users/leonardo.cruciani/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}{C
@@ -665,22 +696,34 @@ LaTeX Font Info:    External font `lmex10' loaded for size
 c.enc}{C:/Users/leonardo.cruciani/AppData/Local/Programs/MiKTeX/fonts/enc/dvips
 /lm/lm-mathit.enc}{C:/Users/leonardo.cruciani/AppData/Local/Programs/MiKTeX/fon
 ts/enc/dvips/lm/lm-mathsy.enc}{C:/Users/leonardo.cruciani/AppData/Local/Program
-s/MiKTeX/fonts/enc/dvips/lm/lm-rm.enc}] [2{C:/Users/leonardo.cruciani/AppData/L
-ocal/Programs/MiKTeX/fonts/enc/dvips/lm/lm-mathex.enc}]
+s/MiKTeX/fonts/enc/dvips/lm/lm-rm.enc}]
+<img/interesctions.png, id=127, 594.72188pt x 335.00156pt>
+File: img/interesctions.png Graphic file (type png)
+<use img/interesctions.png>
+Package pdftex.def Info: img/interesctions.png  used on input line 115.
+(pdftex.def)             Requested size: 385.02547pt x 216.87944pt.
+ [2 <./img/interesctions.png>] [3{C:/Users/leonardo.cruciani/AppData/Local/Prog
+rams/MiKTeX/fonts/enc/dvips/lm/lm-mathex.enc}]
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 240.
+(hyperref)                removing `math shift' on input line 261.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 240.
+(hyperref)                removing `math shift' on input line 261.
 
-[3]
 Package hyperref Info: bookmark level for unknown algorithm defaults to 0 on in
-put line 294.
- [4]
+put line 315.
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+[4]
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+[5]
 LaTeX Font Info:    Trying to load font information for T1+lmtt on input line 4
-09.
+26.
 
 (C:\Users\leonardo.cruciani\AppData\Local\Programs\MiKTeX\tex/latex/lm\t1lmtt.f
 d
@@ -690,54 +733,55 @@ Package microtype Info: Loading generic protrusion settings for font family
 (microtype)             `lmtt' (encoding: T1).
 (microtype)             For optimal results, create family-specific settings.
 (microtype)             See the microtype manual for details.
- [5] [6]
+ [6]
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 507.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\rho' on input line 507.
+(hyperref)                removing `math shift' on input line 546.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 507.
+(hyperref)                removing `\rho' on input line 546.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 530.
+(hyperref)                removing `math shift' on input line 546.
+
+[7]
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 569.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 530.
+(hyperref)                removing `math shift' on input line 569.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 556.
+(hyperref)                removing `math shift' on input line 595.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\rho' on input line 556.
+(hyperref)                removing `\rho' on input line 595.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 556.
+(hyperref)                removing `math shift' on input line 595.
 
-LaTeX Font Info:    Trying to load font information for TS1+lmr on input line 5
-71.
+LaTeX Font Info:    Trying to load font information for TS1+lmr on input line 6
+10.
 
 (C:\Users\leonardo.cruciani\AppData\Local\Programs\MiKTeX\tex/latex/lm\ts1lmr.f
 d
 File: ts1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
-) [7{C:/Users/leonardo.cruciani/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/l
+) [8{C:/Users/leonardo.cruciani/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/l
 m/lm-ts1.enc}]
-Overfull \hbox (23.40945pt too wide) in paragraph at lines 610--614
+Overfull \hbox (23.40945pt too wide) in paragraph at lines 649--653
  []\T1/lmr/bx/n/10.95 (-20) Reproducibility.[] \T1/lmr/m/n/10.95 (-20) The Pyth
 on code, lecture-notes pseu-docode tran-scrip-tion (\T1/lmtt/m/n/10.95 docs/alg
 orithms.md\T1/lmr/m/n/10.95 (-20) ),
  []
 
-[8] (report.aux)
+[9] (report.aux)
  ***********
 LaTeX2e <2025-11-01>
 L3 programming layer <2026-01-19>
@@ -746,13 +790,13 @@ Package rerunfilecheck Info: File `report.out' has not changed.
 (rerunfilecheck)             Checksum: ADA0C742517EB236CDEEA63B8028E123;4034.
  ) 
 Here is how much of TeX's memory you used:
- 14217 strings out of 467867
- 224268 string characters out of 5412527
- 676436 words of memory out of 5000000
- 42584 multiletter control sequences out of 15000+600000
- 728689 words of font info for 228 fonts, out of 8000000 for 9000
+ 14602 strings out of 467867
+ 231152 string characters out of 5412527
+ 681707 words of memory out of 5000000
+ 42943 multiletter control sequences out of 15000+600000
+ 728808 words of font info for 230 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 75i,12n,79p,1005b,594s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 75i,12n,79p,1005b,606s stack positions out of 10000i,1000n,20000p,200000b,200000s
 <C:/Users/leonardo.cruciani/AppData/Local/Programs/MiKTeX/fonts/type1/public/
 lm/lmbx10.pfb><C:/Users/leonardo.cruciani/AppData/Local/Programs/MiKTeX/fonts/t
 ype1/public/lm/lmbx12.pfb><C:/Users/leonardo.cruciani/AppData/Local/Programs/Mi
@@ -778,9 +822,9 @@ a/Local/Programs/MiKTeX/fonts/type1/public/lm/lmsy8.pfb><C:/Users/leonardo.cruc
 iani/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmtt10.pfb><C:/Users/l
 eonardo.cruciani/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/symb
 ols/msbm10.pfb>
-Output written on report.pdf (8 pages, 420407 bytes).
+Output written on report.pdf (9 pages, 542888 bytes).
 PDF statistics:
- 327 PDF objects out of 1000 (max. 8388607)
- 55 named destinations out of 1000 (max. 500000)
- 56001 words of extra memory for PDF output out of 61914 (max. 10000000)
+ 342 PDF objects out of 1000 (max. 8388607)
+ 58 named destinations out of 1000 (max. 500000)
+ 56006 words of extra memory for PDF output out of 61914 (max. 10000000)
 

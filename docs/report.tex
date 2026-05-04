@@ -12,6 +12,8 @@
 \usepackage{microtype}
 \usepackage{enumitem}
 \usepackage{xcolor}
+\usepackage{graphicx}
+\graphicspath{{img/}}
 
 \hypersetup{
     colorlinks=true,
@@ -101,7 +103,26 @@ Section~\ref{sec:conc} concludes.
 The intersection has $F$ traffic flows, partitioned into $S$ disjoint
 \emph{combinations} of non-conflicting flows: a combination receives
 green (and later yellow and red) together. For the F4C2 case
-$F = 4$ and $S = 2$, with $C_1 = \{1, 3\}$ and $C_2 = \{2, 4\}$.
+$F = 4$ and $S = 2$, with $C_1 = \{1, 3\}$ and $C_2 = \{2, 4\}$;
+Figure~\ref{fig:intersections}(a) gives the geometry. The paper also
+considers a much larger F12C2 instance with $12$ flows in $2$
+asymmetric combinations (Figure~\ref{fig:intersections}(b)) for which
+the exact MDP is intractable and they use their RVC heuristic; we
+restrict attention to F4C2 throughout.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.85\textwidth]{interesctions.png}
+    \caption{The two infrastructures considered by Haijema and van der
+    Wal~\cite{haijema2008}.
+    Left, ``F4C2'': 4 flows arranged in 2 symmetric combinations
+    ($C_1 = \{1, 3\}$ and $C_2 = \{2, 4\}$), our replication target.
+    Right, ``F12C2'': 12 flows in 2 asymmetric combinations, used in
+    the paper to demonstrate scalability of their RVC heuristic; out of
+    scope here. Reproduced from \cite[Fig.~3]{haijema2008}.}
+    \label{fig:intersections}
+\end{figure}
+
 Time is discretised into slots of length $\delta = 2$\,s. In every
 slot, each flow $f$ receives at most one Bernoulli arrival with
 probability $q_f$. When the lights show green or yellow for flow $f$
@@ -393,8 +414,26 @@ state-wise minimum/argmin with a couple of vectorised NumPy ops
 instead of a Python loop. The model build at $K = 10$ assembles
 $\bar{p}$ as a CSR matrix of shape
 $1.76 \times 10^5 \times 1.17 \times 10^5$ with $2.45 \times 10^6$
-nonzeros in $\sim 1.5$\,s. At $K = 15$ the same step takes $\sim 9$\,s
+nonzeros in $\sim 0.5$\,s. At $K = 15$ the same step takes $\sim 0.5$\,s
 and produces $\sim 1.16 \times 10^7$ nonzeros.
+
+\paragraph{Kernel build acceleration.}
+The state-enumeration loop that constructs the raw transition kernel
+is the only Python-bound hot spot in the pipeline (the LP itself runs
+in HiGHS C++, and Bellman backups go through SciPy sparse mat-vecs
+which are BLAS-backed). We provide three interchangeable backends,
+selected at import time:
+(i)~a Cython extension (\texttt{src/\_build\_kernel.pyx}) for systems
+with an MSVC or GCC toolchain;
+(ii)~a Numba JIT-compiled function
+(\texttt{src/\_build\_kernel\_numba.py}) for systems without a C
+compiler -- this is the default fast path on Windows;
+(iii)~a pure-Python reference implementation as the ultimate fallback.
+The Numba backend reduces the build time at $K = 15$ from
+$\sim 9$\,s in pure Python to $\sim 0.5$\,s, an $\approx 19\times$
+speedup that is verified to be bit-equivalent against the pure-Python
+output. This makes $K = 20$ ($1.56 \times 10^6$ states) tractable for
+sensitivity sweeps.
 
 \paragraph{Policy iteration.}
 Each policy-evaluation step solves the Poisson system
@@ -487,7 +526,7 @@ $\rho$ & paper & VI ($K = 10$) & VI ($K = 15$) &
 $\Delta$ ($K = 10$) & $\Delta$ ($K = 15$) \\
 \midrule
 0.40 & 4.89  & 5.061  & 5.061  & $+0.171$ & $+0.171$ \\
-0.60 & 6.95  & 6.974  & ---    & $+0.024$ & ---      \\
+0.60 & 6.95  & 6.974  & 6.974  & $+0.024$ & $+0.024$ \\
 0.80 & 13.5  & 12.997 & 13.520 & $-0.503$ & $+0.020$ \\
 \bottomrule
 \end{tabular}
@@ -547,7 +586,7 @@ truncates the queue distribution.}
 $\rho$ & $K = 6$ & $K = 10$ & $K = 15$ \\
 \midrule
 0.40 & 5.061  & 5.061  & 5.061  \\
-0.60 & 6.946  & 6.974  & ---    \\
+0.60 & 6.946  & 6.974  & 6.974  \\
 0.80 & 10.779 & 12.997 & 13.520 \\
 \bottomrule
 \end{tabular}
