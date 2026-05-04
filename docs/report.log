@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.29 (MiKTeX 26.2) (preloaded format=pdflatex 2026.4.9)  4 MAY 2026 13:25
+This is pdfTeX, Version 3.141592653-2.6-1.40.29 (MiKTeX 26.2) (preloaded format=pdflatex 2026.4.9)  4 MAY 2026 15:06
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -700,30 +700,24 @@ s/MiKTeX/fonts/enc/dvips/lm/lm-rm.enc}]
 <img/interesctions.png, id=127, 594.72188pt x 335.00156pt>
 File: img/interesctions.png Graphic file (type png)
 <use img/interesctions.png>
-Package pdftex.def Info: img/interesctions.png  used on input line 115.
+Package pdftex.def Info: img/interesctions.png  used on input line 114.
 (pdftex.def)             Requested size: 385.02547pt x 216.87944pt.
  [2 <./img/interesctions.png>] [3{C:/Users/leonardo.cruciani/AppData/Local/Prog
 rams/MiKTeX/fonts/enc/dvips/lm/lm-mathex.enc}]
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 261.
+(hyperref)                removing `math shift' on input line 310.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 261.
-
-Package hyperref Info: bookmark level for unknown algorithm defaults to 0 on in
-put line 315.
-
-LaTeX Warning: `h' float specifier changed to `ht'.
+(hyperref)                removing `math shift' on input line 310.
 
 [4]
-
-LaTeX Warning: `h' float specifier changed to `ht'.
-
-[5]
+Package hyperref Info: bookmark level for unknown algorithm defaults to 0 on in
+put line 354.
+ [5]
 LaTeX Font Info:    Trying to load font information for T1+lmtt on input line 4
-26.
+69.
 
 (C:\Users\leonardo.cruciani\AppData\Local\Programs\MiKTeX\tex/latex/lm\t1lmtt.f
 d
@@ -735,68 +729,65 @@ Package microtype Info: Loading generic protrusion settings for font family
 (microtype)             See the microtype manual for details.
  [6]
 
-Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 546.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\rho' on input line 546.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 546.
+LaTeX Warning: `h' float specifier changed to `ht'.
 
 [7]
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 569.
+(hyperref)                removing `math shift' on input line 592.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 569.
+(hyperref)                removing `\rho' on input line 592.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 595.
+(hyperref)                removing `math shift' on input line 592.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\rho' on input line 595.
+(hyperref)                removing `math shift' on input line 615.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 595.
+(hyperref)                removing `math shift' on input line 615.
 
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 641.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `\rho' on input line 641.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 641.
+
+[8]
 LaTeX Font Info:    Trying to load font information for TS1+lmr on input line 6
-10.
+54.
 
 (C:\Users\leonardo.cruciani\AppData\Local\Programs\MiKTeX\tex/latex/lm\ts1lmr.f
 d
 File: ts1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
-) [8{C:/Users/leonardo.cruciani/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/l
-m/lm-ts1.enc}]
-Overfull \hbox (23.40945pt too wide) in paragraph at lines 649--653
- []\T1/lmr/bx/n/10.95 (-20) Reproducibility.[] \T1/lmr/m/n/10.95 (-20) The Pyth
-on code, lecture-notes pseu-docode tran-scrip-tion (\T1/lmtt/m/n/10.95 docs/alg
-orithms.md\T1/lmr/m/n/10.95 (-20) ),
- []
-
-[9] (report.aux)
+) [9{C:/Users/leonardo.cruciani/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/l
+m/lm-ts1.enc}] (report.aux)
  ***********
 LaTeX2e <2025-11-01>
 L3 programming layer <2026-01-19>
  ***********
 Package rerunfilecheck Info: File `report.out' has not changed.
-(rerunfilecheck)             Checksum: ADA0C742517EB236CDEEA63B8028E123;4034.
+(rerunfilecheck)             Checksum: 69C758B04D995A6D16135D3503C760A6;3794.
  ) 
 Here is how much of TeX's memory you used:
- 14602 strings out of 467867
- 231152 string characters out of 5412527
- 681707 words of memory out of 5000000
- 42943 multiletter control sequences out of 15000+600000
- 728808 words of font info for 230 fonts, out of 8000000 for 9000
+ 14629 strings out of 467867
+ 231510 string characters out of 5412527
+ 680669 words of memory out of 5000000
+ 42948 multiletter control sequences out of 15000+600000
+ 729649 words of font info for 240 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 75i,12n,79p,1005b,606s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 75i,12n,79p,1005b,467s stack positions out of 10000i,1000n,20000p,200000b,200000s
 <C:/Users/leonardo.cruciani/AppData/Local/Programs/MiKTeX/fonts/type1/public/
 lm/lmbx10.pfb><C:/Users/leonardo.cruciani/AppData/Local/Programs/MiKTeX/fonts/t
 ype1/public/lm/lmbx12.pfb><C:/Users/leonardo.cruciani/AppData/Local/Programs/Mi
@@ -822,9 +813,9 @@ a/Local/Programs/MiKTeX/fonts/type1/public/lm/lmsy8.pfb><C:/Users/leonardo.cruc
 iani/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmtt10.pfb><C:/Users/l
 eonardo.cruciani/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/symb
 ols/msbm10.pfb>
-Output written on report.pdf (9 pages, 542888 bytes).
+Output written on report.pdf (9 pages, 550660 bytes).
 PDF statistics:
- 342 PDF objects out of 1000 (max. 8388607)
- 58 named destinations out of 1000 (max. 500000)
+ 359 PDF objects out of 1000 (max. 8388607)
+ 60 named destinations out of 1000 (max. 500000)
  56006 words of extra memory for PDF output out of 61914 (max. 10000000)
 

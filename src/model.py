@@ -121,13 +121,18 @@ class F4C2Model:
     # -------- decision space --------
 
     def feasible_actions(
-        self, l: int, i: int, all_zero: bool
+        self, l: int, i: int, k: tuple[int, int, int, int]
     ) -> list[tuple[int, int]]:
-        """Return list of next-light-state tuples (l', i') feasible at (l, i).
+        """Return list of next-light-state tuples (l', i') feasible at (k, l, i).
 
-        ``all_zero`` is the indicator that every queue is empty in the
-        current state (triggers the freeze rule of the paper).
+        Per Haijema & van der Wal §3.2, the all-red action set advances
+        to the *next nonempty* combination in cyclic order. With S = 2
+        this is normally combo $(l+1) \\bmod 2$, but if that combo is
+        empty and the current combo $l$ is non-empty, l' = l (skip
+        back) -- this skips a wasted green/yellow cycle through the
+        empty combo.
         """
+        all_zero = (k[0] == 0 and k[1] == 0 and k[2] == 0 and k[3] == 0)
         if i == 0:                          # green
             if all_zero:
                 return [(l, 0)]                          # frozen: keep
@@ -139,7 +144,11 @@ class F4C2Model:
         if i == 3:                          # all-red
             if all_zero:
                 return [(l, 3)]                          # frozen: keep all-red
-            return [(l, 3), ((l + 1) % self.S, 0)]       # keep | advance to next combo
+            # next nonempty combo in cyclic order: try (l+1)%S, fall back to l
+            next_l = (l + 1) % self.S
+            next_l_empty = all(k[f] == 0 for f in F4C2_COMBINATIONS[next_l])
+            l_prime = l if next_l_empty else next_l
+            return [(l, 3), (l_prime, 0)]                # keep | advance to next nonempty combo
         raise ValueError(f"invalid phase {i}")
 
     # -------- per-flow transition distribution --------
@@ -282,9 +291,8 @@ class F4C2Model:
 
         for s in range(n_states):
             k, l, i = self.decode(s)
-            all_zero = (k[0] == 0 and k[1] == 0 and k[2] == 0 and k[3] == 0)
             cost_s = float(k[0] + k[1] + k[2] + k[3])
-            actions = self.feasible_actions(l, i, all_zero)
+            actions = self.feasible_actions(l, i, k)
 
             for (l_next, i_next) in actions:
                 if i_next == 3:

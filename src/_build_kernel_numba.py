@@ -94,8 +94,19 @@ def _kernel_inner(K: int, q_in: np.ndarray):
                 actions_l[0] = l; actions_i[0] = 3
                 n_actions = 1
             else:
+                # Skip-empty rule (paper §3.2): l' = next nonempty combo
+                # in cyclic order. Combo 0 = {flow 0, flow 2}; combo 1 =
+                # {flow 1, flow 3}. With S = 2, if combo (l+1)%2 is empty
+                # and combo l is non-empty (guaranteed since not all_zero),
+                # l' = l (skip back).
+                next_l = (l + 1) % S
+                if next_l == 0:
+                    next_l_empty = (k0 == 0) and (k2 == 0)
+                else:
+                    next_l_empty = (k1 == 0) and (k3 == 0)
+                l_prime = l if next_l_empty else next_l
                 actions_l[0] = l; actions_i[0] = 3
-                actions_l[1] = (l + 1) % S; actions_i[1] = 0
+                actions_l[1] = l_prime; actions_i[1] = 0
                 n_actions = 2
 
         for ai in range(n_actions):

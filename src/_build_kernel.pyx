@@ -92,6 +92,8 @@ def build_f4c2_kernel(int K, cnp.ndarray[double, ndim=1] q_in):
         double p0, p01, p012, p0123
         double cost_s
         int f
+        int l_prime
+        int next_l_empty
 
     q_arr[0] = q_in[0]; q_arr[1] = q_in[1]; q_arr[2] = q_in[2]; q_arr[3] = q_in[3]
 
@@ -135,8 +137,20 @@ def build_f4c2_kernel(int K, cnp.ndarray[double, ndim=1] q_in):
                     actions_l[0] = l; actions_i[0] = 3
                     n_actions = 1
                 else:
+                    # Skip-empty rule (paper section 3.2): l' = next
+                    # nonempty combo in cyclic order. With S = 2, if
+                    # combo (l+1)%2 is empty and combo l is non-empty,
+                    # l' = l (skip back). Combo 0 = {0, 2}, combo 1 = {1, 3}.
+                    if ((l + 1) % S) == 0:
+                        next_l_empty = (k0 == 0) and (k2 == 0)
+                    else:
+                        next_l_empty = (k1 == 0) and (k3 == 0)
+                    if next_l_empty:
+                        l_prime = l
+                    else:
+                        l_prime = (l + 1) % S
                     actions_l[0] = l; actions_i[0] = 3
-                    actions_l[1] = (l + 1) % S; actions_i[1] = 0
+                    actions_l[1] = l_prime; actions_i[1] = 0
                     n_actions = 2
 
             for ai in range(n_actions):

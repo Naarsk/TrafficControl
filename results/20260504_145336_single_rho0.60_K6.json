@@ -1,0 +1,45 @@
+{
+  "timestamp": "20260504_145336",
+  "tag": "single_rho0.60_K6",
+  "args": {
+    "cmd": "single",
+    "rho": 0.6,
+    "K": 6,
+    "algo": "vi",
+    "tol": 1e-06,
+    "lp_K": null,
+    "lp_method": "highs"
+  },
+  "platform": {
+    "python": "3.14.0",
+    "system": "Windows",
+    "machine": "AMD64"
+  },
+  "results": [
+    {
+      "rho": 0.6,
+      "K": 6,
+      "g_vi": 4.1619714831581405,
+      "g_pi": null,
+      "e_w_vi": 6.936619138596901,
+      "e_w_pi": null,
+      "iters_vi": 313,
+      "iters_pi": null,
+      "time_build": 0.40828609466552734,
+      "time_vi": 0.11961245536804199,
+      "time_pi": 0.0,
+      "pi_failed": false,
+      "pi_error": null,
+      "lp_K": null,
+      "g_lp": null,
+      "g_vi_lp": null,
+      "e_w_lp": null,
+      "e_w_vi_lp": null,
+      "iters_lp": null,
+      "iters_vi_lp": null,
+      "time_build_lp": 0.0,
+      "time_lp": 0.0,
+      "time_vi_lp": 0.0
+    }
+  ]
+}
