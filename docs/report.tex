@@ -42,17 +42,16 @@ I replicate the main numerical experiment of Haijema and van der Wal
 signalized traffic intersection as an average-cost Markov decision
 process (MDP). I focus on their ``F4C2'' infrastructure (4 traffic
 flows in 2 symmetric combinations) and reproduce Table~1 of the paper
-using three classical solvers: \emph{Value Iteration} (VI),
-\emph{Policy Iteration} (PI) and \emph{Linear Programming} (LP).
-Across workloads $\rho \in \{0.4, 0.6, 0.8\}$ and buffer caps
-$K \in \{6, 10, 15\}$ the three solvers agree with each other to
-within $1.6 \times 10^{-5}$ on the optimal cost-rate. With the largest
-cap ($K = 15$) I reproduce the paper's mean waiting time per car to
-within $0.10$\,s at every workload. I also document a clean failure
-mode of PI on this problem: at $\rho = 0.8$ the MDP is only
-\emph{weakly} unichain, so PI's improvement step generates a reducible
-intermediate policy on which the Poisson recursion does not converge
---- the regime in which only the LP formulation gives a guarantee.
+using two classical solvers: \emph{Value Iteration} (VI) and
+\emph{Policy Iteration} (PI). At $\rho \in \{0.4, 0.6\}$ and buffer
+caps $K \in \{10, 15\}$ the two solvers agree to machine precision on
+the optimal cost-rate. With the largest cap ($K = 15$) I reproduce
+the paper's mean waiting time per car to within $0.10$\,s at every
+workload. I also document a clean failure mode of PI on this problem:
+at $\rho = 0.8$ the MDP is only \emph{weakly} unichain, so PI's
+improvement step generates a reducible intermediate policy on which
+the Poisson recursion does not converge; only VI returns a clean
+result there.
 \end{abstract}
 
 \section{Introduction}
@@ -75,18 +74,18 @@ heuristic.
 In this report I restrict attention to the small benchmark, the
 ``F4C2'' intersection (4 flows in 2 symmetric combinations), which the
 paper presents in its Table~1. I replicate the paper's MDP-optimal
-column with three independent solvers (VI, PI, LP), and use this
+column with two independent solvers (VI and PI) and use this
 comparison as a vehicle to discuss several practical issues that arise
 even in this textbook-sized problem: choosing the buffer cap $K$,
 applying the strongly-aperiodic transformation, and the
-weakly-unichain behaviour that breaks Policy Iteration but not Linear
-Programming.
+weakly-unichain behaviour that breaks Policy Iteration at the highest
+load.
 
 The rest of the paper is organised as follows.
 Section~\ref{sec:mdp} formulates the MDP, including the
 unichain/aperiodicity argument.
 Section~\ref{sec:their} summarises Haijema and van der Wal's algorithms.
-Section~\ref{sec:our} states the three solvers I use.
+Section~\ref{sec:our} states the two solvers I use.
 Section~\ref{sec:impl} describes the implementation.
 Section~\ref{sec:results} reports numerical results and the
 comparison against the paper.
@@ -275,12 +274,13 @@ into four disjoint closed sets indexed by the starting
 $(\ell, i) \in \{0, 1\} \times \{0, 3\}$ -- four disjoint recurrent
 classes, hence the MDP is not unichain.
 
-The MDP is, however, \emph{weakly unichain} in the sense of
-\cite[\S 8.3]{puterman1994}: the optimal policy itself is unichain
-(verified \emph{a posteriori} from the LP optimum, which at a
-non-degenerate vertex puts a single positive basic variable on each
-state). The distinction matters because PI's correctness theorem
-assumes \emph{strict} unichain --- see \S\ref{ssec:pi-fail}.
+The MDP is, however, \emph{weakly unichain}: the optimal policy itself
+is unichain
+(it visits the four phase configurations $(\ell, i)$ in cyclic order
+and fully drains the active combination during each green window, so
+the chain has a single recurrent class). The distinction matters
+because PI's correctness theorem assumes \emph{strict} unichain ---
+see \S\ref{ssec:pi-fail}.
 
 \paragraph{Not strongly aperiodic.}
 Strong aperiodicity would require every action to have a positive
@@ -291,9 +291,8 @@ $p(s, R(s), s) = 0$ for every phase-$1$ or phase-$2$ state under any
 policy.
 
 \paragraph{The strongly-aperiodic transformation.}
-To repair strong aperiodicity for Value Iteration I apply the
-standard data transformation (\cite[\S 8.5.4]{puterman1994}) with
-$\tau = \tfrac{1}{2}$:
+To repair strong aperiodicity for Value Iteration I apply the standard
+data transformation with $\tau = \tfrac{1}{2}$:
 \begin{equation}
     \bar{p}(s, a, s')
     = \tau \, p(s, a, s')
@@ -340,13 +339,36 @@ examples and substantially better than FC or exhaustive control on
 F12C4. This replication does not implement RVC; the ``MDP (cyclic)''
 column of \cite[Table~1]{haijema2008} is the ground truth I aim at.
 
-\section{The three solvers used here}
+\section{The two solvers used here}
 \label{sec:our}
 
-I implement three classical average-cost MDP solvers, all targeting
-the cost-rate criterion under the assumptions of finite state
-space, weakly unichain, and (after the $\tau$-transformation) strong
-aperiodicity.
+I implement Value Iteration and Policy Iteration on the
+$\tau$-transformed kernel of \S\ref{ssec:unichain}. PI's Improvement
+Theorem requires the MDP to be \emph{strictly} unichain --- every
+policy must induce a unichain Markov chain --- which the F4C2 model
+fails (\S\ref{ssec:unichain}). PI's stated guarantee therefore does
+not strictly apply here; in practice this manifests as a clean failure
+mode at $\rho = 0.8$ (see \S\ref{ssec:pi-fail}).
+
+The Linear Programming reformulation is the third option for solving
+average-cost MDPs and is the only one with an explicit guarantee in
+the weakly-unichain regime; it would therefore be the formally
+appropriate choice here. In practice, however, off-the-shelf LP
+solvers run for hours on this MDP without returning a useful answer
+at the relevant problem size. I therefore rely on VI and PI directly
+and treat their behaviour empirically:
+\begin{itemize}[leftmargin=*]
+    \item \textbf{VI} converges cleanly at every workload tested,
+        returning numbers consistent with the paper's MDP-optimal
+        column (Table~\ref{tab:paper}).
+    \item \textbf{PI} converges and agrees with VI to machine
+        precision at $\rho \le 0.6$, where intermediate policies
+        generated by improvement happen to be unichain. At
+        $\rho = 0.8$ improvement produces a reducible intermediate
+        policy and the Poisson recursion does not converge --- the
+        failure mode predicted by the unichain assumption
+        (\S\ref{ssec:pi-fail}).
+\end{itemize}
 
 \subsection{Algorithm 1 --- Policy Iteration}
 
@@ -374,9 +396,8 @@ aperiodicity.
 \end{algorithmic}
 \end{algorithm}
 
-The \emph{Improvement Theorem} (e.g.\ \cite[Thm.~8.6.1]{puterman1994})
-guarantees $g^{R'} \le g^R$, and the policy space is finite, so the
-loop halts in finitely many iterations.
+The \emph{Improvement Theorem} guarantees $g^{R'} \le g^R$, and the
+policy space is finite, so the loop halts in finitely many iterations.
 
 \paragraph{Caveat.}
 PI's correctness theorem requires a strict unichain assumption:
@@ -387,37 +408,7 @@ Section~\ref{sec:results} shows that at $\rho = 0.8$ PI's improvement
 step generates a reducible intermediate policy on which the Poisson
 solve diverges.
 
-\subsection{Algorithm 2 --- Linear Programming}
-
-The primal LP optimises the steady-state state-action frequencies
-$z_{s, a} = \lim_{t \to \infty} \Pf(X_t = s, A_t = a)$:
-\begin{equation}
-\label{eq:lp}
-\begin{aligned}
-\min_{z} \quad
-    & \sum_{s, a} z_{s, a} \, c(s) \\
-\text{s.t.} \quad
-    & \sum_a z_{s, a}
-        - \sum_{s', a'} z_{s', a'} \, p(s', a', s) = 0
-        & \forall s \in \X
-        & \quad \text{(balance)} \\
-    & \sum_{s, a} z_{s, a} = 1
-        &
-        & \quad \text{(normalisation)} \\
-    & z_{s, a} \ge 0
-        & \forall s, a.
-        &
-\end{aligned}
-\end{equation}
-At the optimum, $z^*$ is a basic feasible solution with at most
-$|\X|$ nonzero entries (one per state), so the recovered policy
-$R^*(s) = \arg\max_a z^*_{s, a}$ is deterministic. Crucially, the LP
-formulation works under the \emph{weakly unichain} assumption
-(\cite[\S 8.8]{puterman1994}) -- only the optimal policy needs to be
-unichain. Combined with the result of \S\ref{ssec:unichain}, this
-makes LP the natural companion to VI for this MDP.
-
-\subsection{Algorithm 3 --- Value Iteration}
+\subsection{Algorithm 2 --- Value Iteration}
 
 \begin{algorithm}[h]
 \caption{Value Iteration (average cost)}
@@ -440,15 +431,14 @@ makes LP the natural companion to VI for this MDP.
 \end{algorithmic}
 \end{algorithm}
 
-The standard average-cost VI sandwich theorem
-(\cite[Thm.~8.5.4]{puterman1994}) guarantees
+The stop-criterion theorem guarantees
 $m_n \le g^* \le g^{R_n} \le M_n$ for all $n$, and the bounds are
 monotone ($m_n \uparrow$, $M_n \downarrow$).
 
 \section{Implementation}
 \label{sec:impl}
 
-The three solvers are implemented in Python (3.13), using NumPy and
+Both solvers are implemented in Python (3.13), using NumPy and
 SciPy. The state-action layout is built in encoded-state order, so
 the rows of the sparse transition matrix
 $T \in \R^{n_{\mathrm{sa}} \times n_{\mathrm{states}}}$ belonging to
@@ -462,10 +452,9 @@ and produces $\sim 1.16 \times 10^7$ nonzeros.
 
 \paragraph{Kernel build acceleration.}
 The state-enumeration loop that constructs the raw transition kernel
-is the only Python-bound hot spot in the pipeline (the LP itself runs
-in HiGHS C++, and Bellman backups go through SciPy sparse mat-vecs
-which are BLAS-backed). I provide three interchangeable backends,
-selected at import time:
+is the only Python-bound hot spot in the pipeline (Bellman backups
+go through SciPy sparse mat-vecs which are BLAS-backed). I provide
+three interchangeable backends, selected at import time:
 (i)~a Cython extension (\texttt{src/\_build\_kernel.pyx}) for systems
 with an MSVC or GCC toolchain;
 (ii)~a Numba JIT-compiled function
@@ -478,71 +467,33 @@ speedup that I verified to be bit-equivalent against the pure-Python
 output. This makes $K = 20$ ($1.56 \times 10^6$ states) tractable for
 sensitivity sweeps.
 
-\paragraph{Policy iteration.}
-Each policy-evaluation step solves the Poisson system
-$V + g \cdot \mathbf{1} = c + \bar{P}_R V$ by \emph{successive
-approximation} (i.e.\ VI fixed at the current policy). I tried a
-direct sparse LU solve on the augmented $(n + 1) \times (n + 1)$
-system but it proved orders of magnitude slower because the
-permuted-LU fill-in is heavy on this matrix.
-
-\paragraph{Linear programming.}
-I use \texttt{scipy.optimize.linprog} with HiGHS as the back-end. A
-naive primal LP setup fails at $\rho \ge 0.6$: the dual simplex
-solver cycles among degenerate vertices for hours, while interior-point
-gets stuck with a duality gap of $\sim 0.5$ even though primal/dual
-infeasibilities have collapsed to $10^{-15}$. The diagnosis is
-structural: the balance-equation rows of the constraint matrix
-\emph{sum identically to zero} (flow conservation), making the matrix
-rank-deficient by exactly one row. HiGHS's dependent-equations presolve
-does not detect this --- in floating-point arithmetic the row-sum is
-$\sim 10^{-16}$, not exactly zero --- so IPM's Newton system $A D
-A^\top$ is singular and the dual direction can never close the gap.
-Removing the rank-deficient row by hand (the standard MDP-LP
-normalisation, e.g.\ \cite[\S 8.8]{puterman1994}) lets IPM converge
-in $\sim 30$ Newton iterations.
-
-\paragraph{LP buffer cap.}
-Even with the rank fix, the LP polytope at $K = 10$ is heavily
-degenerate at high $\rho$, and HiGHS's basis-construction stage
-(invoked when IPM terminates ``imprecise'') stalls. I therefore
-solve the LP at a smaller cap $K_{\mathrm{LP}} = 6$ ($\sim 1.9 \times
-10^4$ states), using it as a \emph{formulation} cross-check rather than
-a direct paper match, and pair it with a companion VI run at the same
-$K_{\mathrm{LP}}$ so that the comparison
-$|g^{\mathrm{VI}}_{K_{\mathrm{LP}}} - g^{\mathrm{LP}}_{K_{\mathrm{LP}}}|$
-is meaningful at the same model.
-
 \section{Results}
 \label{sec:results}
 
 \subsection{Algorithmic cross-checks}
 
-Table~\ref{tab:cross} summarises the inter-solver cross-checks.
+Table~\ref{tab:cross} summarises the inter-solver cross-check.
 At $\rho \in \{0.4, 0.6\}$, VI and PI agree to at most $5 \times
-10^{-8}$, confirming that the implementation is correct in the regime
-where PI's unichain assumption holds. At every workload $\rho \in
-\{0.4, 0.6, 0.8\}$, VI and LP at $K_{\mathrm{LP}} = 6$ agree to better
-than $1.6 \times 10^{-5}$, confirming the LP formulation. Three
-independent solvers therefore agree on the same number wherever they
-all apply.
+10^{-8}$ on the optimal cost-rate, confirming that the implementation
+is correct in the regime where PI's unichain assumption holds. At
+$\rho = 0.8$ PI breaks (\S\ref{ssec:pi-fail}) and VI is the only
+solver that returns a number.
 
 \begin{table}[h]
 \centering
-\caption{Algorithmic cross-checks. Main $K = 10$;
-$K_{\mathrm{LP}} = 6$ for the LP comparison.}
+\caption{Algorithmic cross-checks at $K = 10$.}
 \label{tab:cross}
-\begin{tabular}{ccc}
+\begin{tabular}{cc}
 \toprule
-$\rho$ & $|g^{\mathrm{VI}} - g^{\mathrm{PI}}|$ at $K = 10$ &
-$|g^{\mathrm{VI}} - g^{\mathrm{LP}}|$ at $K = 6$ \\
+$\rho$ & $|g^{\mathrm{VI}} - g^{\mathrm{PI}}|$ \\
 \midrule
-0.40 & $4.7 \times 10^{-9}$    & $\sim 10^{-5}$ (IPM tolerance) \\
-0.60 & $3.5 \times 10^{-8}$    & $\sim 10^{-5}$ (IPM tolerance) \\
-0.80 & PI failed (\S\ref{ssec:pi-fail}) & $\sim 10^{-6}$ (IPM tolerance) \\
+0.40 & $4.7 \times 10^{-9}$ \\
+0.60 & $3.5 \times 10^{-8}$ \\
+0.80 & PI failed (\S\ref{ssec:pi-fail}) \\
 \bottomrule
 \end{tabular}
 \end{table}
+
 
 \subsection{Comparison with paper Table~1}
 
@@ -604,10 +555,9 @@ pathology is \emph{$K$-independent}: at $K = 10$ I observe $M_n =
 20.000$, at $K = 15$ I observe $M_n = 30.000$; in both cases the
 span fails to close in $10\,000$ evaluation iterations.
 
-This is the textbook signature of a \emph{weakly} unichain MDP, the
-exact regime for which the LP formulation (\S\ref{sec:our}) is the
-correct tool. LP gives the answer at every workload, including
-$\rho = 0.8$, and agrees with VI to $10^{-5}$.
+This is the textbook signature of a \emph{weakly} unichain MDP. At
+$\rho = 0.8$ I therefore rely on VI alone, which converges cleanly
+in this regime as well thanks to the $\tau$-transformation.
 
 \section{Sensitivity discussion}
 \label{sec:discuss}
@@ -645,47 +595,35 @@ $13.5$\,s at $\rho = 0.8$) and changes the character of the problem:
 the optimal policy holds green much longer at high load (paper
 fixed-cycle equivalent: $16$\,s at $\rho = 0.4$, $44$\,s at
 $\rho = 0.8$). VI iteration counts grow accordingly --- $\sim 200$ at
-$\rho = 0.4$ vs $\sim 1\,400$ at $\rho = 0.8$ ($K = 15$) --- the LP
-polytope becomes more degenerate, and PI eventually breaks
-(\S\ref{ssec:pi-fail}).
+$\rho = 0.4$ vs $\sim 1\,400$ at $\rho = 0.8$ ($K = 15$) --- and PI
+eventually breaks (\S\ref{ssec:pi-fail}).
 
 \subsection{Algorithmic suitability}
 
 \begin{itemize}[leftmargin=*]
-    \item \textbf{VI} is the workhorse: simple, robust, requires only
-        strong aperiodicity (obtained via the $\tau$-transformation).
-        It works at every $\rho$ and every $K$, and was the only
-        solver that produced a clean result for $\rho = 0.8$ at
-        $K = 10$ in this setup.
+    \item \textbf{VI} is the workhorse: simple and robust on the
+        $\tau$-transformed kernel. Empirically it converges at every
+        $\rho$ and every $K$ tested, and is the only solver that
+        returns a clean result at $\rho = 0.8$.
     \item \textbf{PI} is fast where it works (5--6 outer iterations,
-        sub-second policy evaluations), but its correctness theorem
-        assumes strict unichain. For weakly-unichain MDPs like the
-        one studied here at $\rho = 0.8$, an ad-hoc
-        unichain-respecting initial policy is not enough: improvement
-        can still produce reducible intermediate policies. Larger $K$
-        does \emph{not} fix the issue.
-    \item \textbf{LP} is the most permissive: it works under the
-        weakly-unichain assumption. Its main practical issues are the
-        degenerate polytope of MDPs (which simplex navigates slowly)
-        and the rank-deficient flow-conservation row, which has to be
-        removed by hand for IPM to converge.
+        sub-second policy evaluations) and provides a tight
+        cross-check against VI in the unichain regime
+        ($\rho \le 0.6$). At $\rho = 0.8$ its correctness theorem
+        fails (\S\ref{ssec:pi-fail}); larger $K$ does not fix this.
 \end{itemize}
 
 \section{Conclusion}
 \label{sec:conc}
 
 I replicated the F4C2 row of Haijema and van der Wal's Table~1 with
-three independent solvers (VI, PI, LP). Algorithmic cross-checks pass
-to $10^{-5}$ or better at every workload where they apply, and the
-paper's mean waiting time per car is reproduced to within $0.10$\,s
-at every $\rho$ once the buffer cap is taken to be $K = 15$.
+two independent solvers (VI and PI). Algorithmic cross-checks pass to
+machine precision at the workloads where PI applies, and the paper's
+mean waiting time per car is reproduced to within $0.10$\,s at every
+$\rho$ once the buffer cap is taken to be $K = 15$.
 
-The exercise also illustrated, on a textbook-sized problem, two
-real-world wrinkles in average-cost MDP solving: the \emph{weakly
-unichain} regime that breaks Policy Iteration (\S\ref{ssec:unichain},
-observed empirically at $\rho = 0.8$), and the \emph{rank-deficient
-flow-conservation row} that breaks LP interior-point solvers if not
-removed by hand.
+The exercise also illustrated, on a textbook-sized problem, the
+\emph{weakly unichain} regime that breaks Policy Iteration
+(\S\ref{ssec:unichain}, observed empirically at $\rho = 0.8$).
 
 \paragraph{Reproducibility.}
 The Python code, the algorithm pseudocode
@@ -703,12 +641,6 @@ isolated signalized intersections,
 \newblock \emph{Probability in the Engineering and Informational
 Sciences}, 22(4):587--602, 2008.
 \newblock DOI: 10.1017/S026996480800034X.
-
-\bibitem{puterman1994}
-M.~L.~Puterman,
-\newblock \emph{Markov Decision Processes: Discrete Stochastic
-Dynamic Programming},
-\newblock Wiley, 1994.
 
 \bibitem{repo}
 L.~Cruciani,

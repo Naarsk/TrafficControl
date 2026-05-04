@@ -17,9 +17,7 @@ We work with a discrete-time **Markov Decision Process** with
 - a one-step **reward / cost** $r(x, a)$,
 - transition probabilities $p(x, a, y) = \mathbb{P}(X_{t+1} = y \mid X_t = x, A_t = a)$.
 
-A **stationary policy** is a map $R : \mathcal{X} \to \mathcal{A}$
-(or more generally $f_{x,a} = \mathbb{P}(A_t = a \mid X_t = x)$ for randomised
-policies, allowed in the LP formulation).
+A **stationary policy** is a map $R : \mathcal{X} \to \mathcal{A}$.
 
 We focus on the **average cost-rate criterion**:
 $$
@@ -128,62 +126,7 @@ the dense linear system (notes margin: $O(n^3)$).
 
 ---
 
-## Algorithm 2 — Linear Programming Formulation  *(notes pp. 10–11)*
-
-**Idea.** Encode randomised policies via **state-action frequencies**
-$$
-z_{x, a} = \lim_{t \to \infty} \mathbb{P}(X_t = x,\, A_t = a) = f_{x, a}\, \pi_x,
-$$
-and write the stationary balance equations as linear constraints. The
-optimal policy turns out to be deterministic (a basic feasible solution
-has at most $|\mathcal{X}|$ nonzero variables, one per state).
-
-### Primal LP (notes p. 10)
-
-$$
-\begin{aligned}
-\min_{z}\quad & g \;=\; \sum_{x \in \mathcal{X}} \sum_{a \in \mathcal{A}_x} z_{x, a}\, r(x, a) \\
-\text{s.t.}\quad & \sum_{a \in \mathcal{A}_x} z_{x, a} \;=\; \sum_{y \in \mathcal{X}} \sum_{a \in \mathcal{A}_y} z_{y, a}\, p(y, a, x) && \forall x \in \mathcal{X} \\
-& \sum_{x} \sum_{a \in \mathcal{A}_x} z_{x, a} \;=\; 1 \\
-& z_{x, a} \;\ge\; 0 && \forall x, \forall a \in \mathcal{A}_x.
-\end{aligned}
-$$
-
-**Recovering the policy.** From the optimal $z^*$,
-$$
-f^*_{x, a} \;=\; \frac{z^*_{x, a}}{\sum_{b \in \mathcal{A}_x} z^*_{x, b}}
-\quad\text{(deterministic at the optimum)}.
-$$
-
-There are $|\mathcal{X}|$ basic variables at the optimum — one positive
-$z^*_{x, a}$ per state — giving a deterministic policy.
-
-### Dual LP (notes p. 11)
-
-Maximise the lower bound from the Improvement Theorem on $g$:
-$$
-\begin{aligned}
-\max_{g,\, V}\quad & g \\
-\text{s.t.}\quad & V(x) \;\ge\; r(x, a) - g + \sum_{y} p(x, a, y)\, V(y) && \forall x \in \mathcal{X},\, \forall a \in \mathcal{A}_x \\
-& g \in \mathbb{R},\quad V(x) \in \mathbb{R} && \forall x.
-\end{aligned}
-$$
-
-No nonnegativity needed — $g$ may be negative (gain from a profit MDP)
-and $V$ is identified only up to an additive constant. Optimal
-$(g^*, V^*)$ solves the Bellman optimality equations.
-
-### Notes
-
-- Works under the weaker **weakly unichain** assumption — only the
-  *optimal* policy needs to be unichain, not every policy.
-- Interpretable as a linear-system relaxation of the Bellman equations:
-  the inequalities $V(x) \ge r(x, a) - g + \sum_y p(x, a, y) V(y)$
-  become tight exactly at the actions chosen by the optimal policy.
-
----
-
-## Algorithm 3 — Value Iteration  *(notes pp. 12–13)*
+## Algorithm 2 — Value Iteration  *(notes pp. 12–13)*
 
 **Idea.** Iterate the Bellman *operator* on a value function. Despite its
 finite-horizon flavour, the *increments* $V_n - V_{n-1}$ converge to $g^*$
@@ -252,6 +195,5 @@ this guarantees $M_n - m_n \to 0$.
 
 | | Per-iteration cost | # iterations | Solver dep | Notes |
 |---|---|---|---|---|
-| Policy Iteration | $O(n^3)$ Poisson solve | very few (often $\le$ 10) | linear solver | Exact $g$ at each step. |
-| Value Iteration  | $O(\sum_x \|\mathcal{A}_x\| \cdot \text{nnz}(P))$ | many but cheap | none | Easiest to code; ε-optimal. |
-| Linear Programming | one LP solve | — | LP solver | Single shot; works under weakly-unichain. |
+| Policy Iteration | $O(n^3)$ Poisson solve | very few (often $\le$ 10) | linear solver | Exact $g$ at each step; requires strict unichain. |
+| Value Iteration  | $O(\sum_x \|\mathcal{A}_x\| \cdot \text{nnz}(P))$ | many but cheap | none | Easiest to code; ε-optimal; needs strong aperiodicity. |
