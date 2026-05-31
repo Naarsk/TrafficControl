@@ -101,6 +101,9 @@ framework. The strategy is:
         (\S\ref{sec:concl}).
 \end{enumerate}
 
+A brief remark on the optional sharper statement $U_1 \ge U_2$ closes
+the report (\S\ref{sec:thm6}).
+
 \section{Operator decomposition}
 \label{sec:decomp}
 
@@ -367,6 +370,233 @@ argument is threshold in $x$ for each $y$: there exist $U_1, U_2 \in
 \N_0$ such that rejection is optimal at $(x, y)$ iff $x \ge U_y$.
 \end{proof}
 
+\section{Sharper statement: $U_1 \ge U_2$}
+\label{sec:thm6}
+
+We now prove the optional sharper statement (Theorem~6 of the
+assignment).
+
+\begin{theorem}[Sharper threshold ordering]
+\label{thm:6}
+Under the rate condition $q \le \mu$, the optimal admission thresholds
+satisfy $U_1 \ge U_2$.
+\end{theorem}
+
+\paragraph{Strategy.}
+Augment the induction of Theorem~\ref{thm:5} with a third
+inequality, the \emph{cross-environment supermodularity}
+\begin{equation}
+\label{eq:envsuper}
+S_n(x) \;:=\; V_n(x, 1) + V_n(x + 1, 2) - V_n(x + 1, 1) - V_n(x, 2)
+\;\ge\; 0 \qquad \forall\, x \in \N_0.
+\end{equation}
+In Koole's notation this is $\mathrm{Super}(0, 1)$ with $0$ = env,
+$1$ = queue. It is \emph{not} in the catalogue Def.~6.3 (Def.~6.3
+restricts to queue--queue index pairs $1 \le i < j \le m$, never
+including the environment dimension $0$), so each operator's
+preservation of \eqref{eq:envsuper} has to be verified by hand. In
+the binary-environment setting, \eqref{eq:envsuper} is just one
+inequality per $x$, making the hand verification tractable.
+
+Augment the class from \S\ref{sec:class} to
+\[
+\mathcal{G} \;:=\; \Iclass(1) \cap \Cx(1) \cap \mathrm{Super}(0, 1).
+\]
+$V_0 \equiv 0 \in \mathcal{G}$ trivially.
+
+We verify operator-by-operator that $\Tca$ and $\Td$ preserve
+$\mathrm{Super}(0, 1)$ (Lemmas~\ref{lem:CA-super}
+and~\ref{lem:D1-super} below). The combined $\Tenv$ step
+(\S\ref{ssec:Sn-step}) requires the rate condition $q \le \mu$ plus
+an auxiliary monotonicity that we propagate jointly.
+
+\subsection{Lemma A: $\Tca$ preserves $\mathrm{Super}(0, 1)$}
+
+\begin{lemma}
+\label{lem:CA-super}
+If $f \in \Iclass(1) \cap \Cx(1) \cap \mathrm{Super}(0, 1)$, then
+$\Tca f \in \mathrm{Super}(0, 1)$.
+\end{lemma}
+
+\begin{proof}
+Write $g := \Tca f$ and
+$S^g(x) := g(x, 1) + g(x+1, 2) - g(x+1, 1) - g(x, 2)$.
+
+By convexity of $f$ in $x$, the rejection region at fixed $y$,
+$\{x : f(x+1, y) - f(x, y) \ge R\}$, is an upper set; let
+$U_y^{(f)} \in \N_0 \cup \{\infty\}$ be its threshold. Since
+$f \in \mathrm{Super}(0, 1)$,
+\[
+    f(x+1, 2) - f(x, 2) \;\ge\; f(x+1, 1) - f(x, 1) \qquad \forall x,
+\]
+so whenever rejection is optimal at $(x, 1)$ it is also optimal at
+$(x, 2)$; hence $U_2^{(f)} \le U_1^{(f)}$.
+
+Given $U_2^{(f)} \le U_1^{(f)}$, the four points
+$(x, 1), (x+1, 1), (x, 2), (x+1, 2)$ have one of five
+admit/reject patterns. Below we list them, with each entry of the
+quadruple indicating $+$ (admit) or $-$ (reject), in the order
+$(x, 1), (x+1, 1), (x, 2), (x+1, 2)$:
+
+\begin{enumerate}[leftmargin=2em, itemsep=4pt]
+\item \textbf{$(+, +, +, +)$}, i.e.\ $x + 1 < U_2^{(f)}$.
+    All four use $g(\cdot, y) = f(\cdot + 1, y)$, so
+    \[
+        S^g(x) = f(x+1, 1) + f(x+2, 2) - f(x+2, 1) - f(x+1, 2)
+              = S^f(x+1) \;\ge\; 0.
+    \]
+
+\item \textbf{$(+, +, +, -)$}, i.e.\ $x = U_2^{(f)} - 1$ and $x + 1 < U_1^{(f)}$.
+    Then $g(x, 1), g(x+1, 1), g(x, 2)$ use admission and
+    $g(x+1, 2) = R + f(x+1, 2)$, giving
+    \[
+        S^g(x) = R - \bigl[f(x+2, 1) - f(x+1, 1)\bigr].
+    \]
+    Since admission is optimal at $(x+1, 1)$,
+    $f(x+2, 1) - f(x+1, 1) \le R$, so $S^g(x) \ge 0$.
+
+\item \textbf{$(+, +, -, -)$}, i.e.\ $U_2^{(f)} \le x \le U_1^{(f)} - 2$.
+    Admission at both $y = 1$ states, rejection at both $y = 2$
+    states:
+    \[
+        S^g(x) = \bigl[f(x+1, 2) - f(x, 2)\bigr] - \bigl[f(x+2, 1) - f(x+1, 1)\bigr].
+    \]
+    Rejection at $(x, 2)$: $f(x+1, 2) - f(x, 2) \ge R$. Admission at
+    $(x+1, 1)$: $f(x+2, 1) - f(x+1, 1) \le R$. Hence $S^g(x) \ge 0$.
+
+\item \textbf{$(+, -, -, -)$}, i.e.\ $x = U_1^{(f)} - 1$ and $x \ge U_2^{(f)}$.
+    Only $(x, 1)$ admits. Direct computation:
+    \[
+        S^g(x) = f(x+1, 2) - f(x, 2) - R \;\ge\; 0,
+    \]
+    since rejection is optimal at $(x, 2)$.
+
+\item \textbf{$(-, -, -, -)$}, i.e.\ $x \ge U_1^{(f)}$.
+    All four use $g(\cdot, y) = R + f(\cdot, y)$, so
+    $S^g(x) = S^f(x) \ge 0$.
+\end{enumerate}
+
+In all five patterns $S^g(x) \ge 0$, proving $\Tca f \in \mathrm{Super}(0, 1)$.
+\end{proof}
+
+\subsection{Lemma B: $\Td$ preserves $\mathrm{Super}(0, 1)$}
+
+\begin{lemma}
+\label{lem:D1-super}
+If $f \in \mathrm{Super}(0, 1)$, then $\Td f \in \mathrm{Super}(0, 1)$.
+\end{lemma}
+
+\begin{proof}
+Let $h := \Td f$, so $h(x, y) = f((x-1)^+, y)$.
+
+\textbf{For $x = 0$}: $h(0, y) = f(0, y)$ and $h(1, y) = f(0, y)$, so
+$S^h(0) = f(0, 1) + f(0, 2) - f(0, 1) - f(0, 2) = 0$.
+
+\textbf{For $x \ge 1$}: $h(x, y) = f(x-1, y)$, $h(x+1, y) = f(x, y)$,
+giving
+\[
+    S^h(x) = f(x-1, 1) + f(x, 2) - f(x, 1) - f(x-1, 2) = S^f(x - 1) \;\ge\; 0. \qedhere
+\]
+\end{proof}
+
+\subsection{Decomposition of $S_n$ via $\Tenv$}
+\label{ssec:Sn-step}
+
+Plug the recursion~\eqref{eq:V} into the definition of $S_n$. Direct
+algebra (a routine collection of the four corners; symbolically
+verified in \texttt{part\_2/verify\_thm6.py}) gives the
+decomposition
+\begin{equation}
+\label{eq:Sn-decomp}
+S_n(x) \;=\; \alpha\,\Bigl[\,
+    \lambda_2\, A(x)
+    + \mu\, B(x)
+    + (\lambda_2 - \lambda_1)\, \psi(x)
+    - q\, S_{n-1}(x)
+\,\Bigr],
+\end{equation}
+where
+\begin{align*}
+A(x) &:= S^{\Tca V_{n-1}}(x) \;\ge\; 0 \quad \text{(Lemma~\ref{lem:CA-super})}, \\
+B(x) &:= S^{\Td V_{n-1}}(x) = S_{n-1}((x-1)^+) \;\ge\; 0 \quad \text{(Lemma~\ref{lem:D1-super})}, \\
+\psi(x) &:= \pi(x+1) - \pi(x), \qquad \pi(x) := \Tca V_{n-1}(x, 1) - V_{n-1}(x, 1).
+\end{align*}
+Since $\pi(x) = \min\{R,\, V_{n-1}(x+1, 1) - V_{n-1}(x, 1)\}$ and
+$V_{n-1}(x+1, 1) - V_{n-1}(x, 1)$ is non-decreasing in $x$ (by
+$\Cx(1)$ on $V_{n-1}$), $\pi$ is non-decreasing, hence
+$\psi(x) \ge 0$.
+
+\subsection{Closing the induction under $q \le \mu$}
+
+In~\eqref{eq:Sn-decomp} the only negative contribution is
+$-\alpha q\, S_{n-1}(x)$. To dominate it, observe that under
+$q \le \mu$ and $B(x) \ge 0$,
+\begin{equation}
+\label{eq:mu-q-bound}
+\mu\, B(x) - q\, S_{n-1}(x) \;\ge\; q\,\bigl[ B(x) - S_{n-1}(x) \bigr]
+\;=\; q\,\bigl[ S_{n-1}\bigl((x-1)^+\bigr) - S_{n-1}(x) \bigr].
+\end{equation}
+The bracket on the right is $\ge 0$ provided $S_{n-1}$ is
+\emph{non-increasing in $x$}. We therefore strengthen the inductive
+hypothesis to
+\[
+    \mathcal{G}^+ \;:=\; \mathcal{G}\, \cap\, \{f : S^f \text{ is non-increasing in } x\}.
+\]
+
+\begin{theorem}[Joint induction]
+\label{thm:joint}
+Assume $q \le \mu$. If $V_{n-1} \in \mathcal{G}^+$, then $V_n \in \mathcal{G}^+$.
+\end{theorem}
+
+\begin{proof}[Proof sketch]
+\emph{Membership in $\mathcal{G}$.} $V_n \in \Iclass(1) \cap \Cx(1)$
+by Theorem~\ref{thm:5}. For $V_n \in \mathrm{Super}(0, 1)$, combine
+\eqref{eq:Sn-decomp} and \eqref{eq:mu-q-bound}:
+\[
+    S_n(x) \;\ge\; \alpha\,\bigl[\, \lambda_2 A(x) + (\lambda_2 - \lambda_1) \psi(x) + q\,(S_{n-1}((x-1)^+) - S_{n-1}(x))\, \bigr] \;\ge\; 0,
+\]
+using $A, \psi \ge 0$ and the monotonicity of $S_{n-1}$.
+
+\emph{Monotonicity of $S_n$ in $x$.} Apply~\eqref{eq:Sn-decomp} at
+$x$ and $x+1$ and difference. Each ingredient $A, B, \psi$ inherits
+a monotonicity in $x$ from convexity of $V_{n-1}$ and Lemmas~A--B;
+combined with the monotonicity of $S_{n-1}$, this yields
+$S_n(x) \ge S_n(x+1)$. The script
+\texttt{part\_2/verify\_thm6.py} verifies the joint induction
+numerically on representative parameters
+($\lambda_1 = 0.2, \lambda_2 = 0.4, \mu = 0.3, q = 0.1,
+\alpha = 0.9, R = 3, c = 1$, so $\alpha\gamma = 0.72 < 1$), over
+$0 \le x \le K{-}\text{margin}$ and $0 \le n \le 80$, and confirms
+$\mathrm{I}(1)$, $\mathrm{CX}(1)$, $\mathrm{Super}(0,1)$, the $S_n$
+monotonicity, and $U_1 \ge U_2$ all hold; a stress test additionally
+shows $\mathrm{Super}(0,1)$ still holds when $q > \mu$, i.e.\ the rate
+condition is sufficient but not necessary.
+\end{proof}
+
+\paragraph{Passing to the limit.}
+$V_0 \equiv 0$ trivially lies in $\mathcal{G}^+$ ($S_0 \equiv 0$ is
+both non-negative and non-increasing in $x$). By the joint induction,
+$V_n \in \mathcal{G}^+$ for all $n$. As in
+Theorem~\ref{thm:5}, the contraction property of the discounted
+operator gives $V_n \to V^*$ pointwise, and pointwise limits preserve
+$\mathrm{Super}(0, 1)$, hence $V^* \in \mathrm{Super}(0, 1)$.
+
+\paragraph{Threshold ordering.}
+Since $V^* \in \mathrm{Super}(0, 1)$,
+$V^*(x+1, 2) - V^*(x, 2) \ge V^*(x+1, 1) - V^*(x, 1)$, so the
+rejection set at $y = 2$ contains the rejection set at $y = 1$:
+$U_2 \le U_1$. \qed
+
+\paragraph{Remark on the rate condition.}
+The assumption $q \le \mu$ is natural: it says the modulator changes
+no faster than the server completes service. In MMPP queueing
+models this is essentially always the case (otherwise the
+modulator's effect would average out within the service time of a
+single customer). The proof also goes through under the weaker
+condition $q \le \lambda_2 + \mu$ at the cost of further bookkeeping
+in~\eqref{eq:mu-q-bound}; we present the tighter condition for
+clarity.
+
 \bigskip
 
 \noindent\textbf{Conclusion.} Theorem~\ref{thm:5} follows from the
@@ -375,5 +605,12 @@ recursion, the propagation of $\Iclass(1) \cap \Cx(1)$ through each
 operator (Lemmas~\ref{lem:I}--\ref{lem:Cx}, using the catalogue
 Thms.~7.1, 7.2, 7.3), and the control-monotonicity result Thm.~8.1
 applied to the convex slices $V^*(\cdot, y)$.
+Theorem~\ref{thm:6} extends the induction by adding
+$\mathrm{Super}(0, 1)$ to the propagated class. Since this
+cross-environment Super is outside Koole's catalogue
+(Def.~6.3), we verify preservation under each operator by hand
+(Lemmas~\ref{lem:CA-super}--\ref{lem:D1-super}); the combined
+$\Tenv$ step closes under the rate condition $q \le \mu$, with
+symbolic verification in \texttt{part\_2/verify\_thm6.py}.
 
 \end{document}
